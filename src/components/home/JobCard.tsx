@@ -33,10 +33,7 @@ function isNew(dateStr: string): boolean {
 
 export default function JobCard({ job }: { job: Job }) {
   return (
-    <div className="posting_item" style={{
-      position: 'relative',
-      ...(job.isSponsored ? { border: '2px solid rgb(255, 149, 0)', borderRadius: '0.5rem' } : {}),
-    }}>
+    <div className={`posting_item${job.isSponsored ? ' is-sponsored' : ''}`} style={{ position: 'relative' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.25rem', padding: '1.5rem' }}>
         {/* Company logo */}
         {job.companyLogoUrl ? (
@@ -93,15 +90,17 @@ export default function JobCard({ job }: { job: Job }) {
             {job.isSponsored && (
               <span
                 style={{
-                  backgroundColor: 'rgb(255, 149, 0)',
+                  background: 'linear-gradient(135deg, rgb(255, 149, 0), rgb(255, 120, 0))',
                   color: '#fff',
-                  padding: '0.15rem 0.6rem',
+                  padding: '0.2rem 0.75rem',
                   borderRadius: '999px',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
                 }}
               >
-                SPONSORED
+                Sponsored
               </span>
             )}
             {!job.isSponsored && isNew(job.publishedAt) && (

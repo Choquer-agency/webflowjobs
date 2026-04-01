@@ -4364,6 +4364,15 @@ figcaption {
   border: 1px solid var(--color-surface--orange);
 }
 
+.posting_item.is-sponsored {
+  border: 2px solid rgb(255, 149, 0);
+  background-color: rgba(255, 149, 0, 0.06);
+}
+
+.posting_item.is-sponsored:hover {
+  border: 2px solid rgb(255, 130, 0);
+}
+
 .company_logo {
   aspect-ratio: 1;
   border-radius: 100%;

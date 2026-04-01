@@ -51,6 +51,7 @@ interface JobFilterClientProps {
     publishedAt: string | null;
     applyUrl: string | null;
     isVerified: boolean;
+    isSponsored?: boolean;
   }[];
 }
 
@@ -127,7 +128,21 @@ export default function JobFilterClient({ jobs }: JobFilterClientProps) {
       <div className="w-dyn-list">
         <div role="list" className="posting_list w-dyn-items">
           {filteredJobs.map((job) => (
-            <div key={job.slug} w-el="parent" role="listitem" className="posting_item w-dyn-item">
+            <div key={job.slug} w-el="parent" role="listitem" className={`posting_item w-dyn-item${job.isSponsored ? ' is-sponsored' : ''}`}>
+              {job.isSponsored && (
+                <div className="sponsored-badge-wrapper" style={{ position: 'absolute', top: '-11px', left: '20px', zIndex: 3 }}>
+                  <span style={{
+                    background: 'linear-gradient(135deg, rgb(255, 149, 0), rgb(255, 120, 0))',
+                    color: '#fff',
+                    padding: '4px 14px',
+                    borderRadius: '999px',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase',
+                  }}>Sponsored</span>
+                </div>
+              )}
               {job.companyLogoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={job.companyLogoUrl} loading="lazy" alt="" className="company_logo" />
@@ -146,7 +161,7 @@ export default function JobFilterClient({ jobs }: JobFilterClientProps) {
                 </div>
               </div>
               <div className="posting_details">
-                {job.publishedAt && isNew(job.publishedAt) && (
+                {!job.isSponsored && job.publishedAt && isNew(job.publishedAt) && (
                   <div className="new-badge">
                     <p>NEW</p>
                   </div>

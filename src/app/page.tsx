@@ -87,6 +87,7 @@ export default async function Home() {
     publishedAt: job.publishedAt,
     applyUrl: job.applyUrl,
     isVerified: job.isVerified,
+    isSponsored: job.isSponsored,
   }));
 
   const faqSchema = {
