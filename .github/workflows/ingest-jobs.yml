@@ -1,0 +1,37 @@
+name: Daily Job Ingestion
+
+on:
+  schedule:
+    # Run every day at 8:00 AM UTC
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+    # Allow manual triggering from GitHub Actions UI
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Convex client
+        run: npx convex codegen
+
+      - name: Run ingestion pipeline
+        env:
+          CONVEX_URL: ${{ secrets.CONVEX_URL }}
+          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MIN_RELEVANCE_SCORE: '5'
+        run: npx tsx scripts/ingest-jobs.ts
