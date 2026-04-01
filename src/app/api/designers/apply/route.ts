@@ -2,8 +2,11 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "@convex/_generated/api";
 import { NextResponse } from "next/server";
 
-const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL!;
-const convex = new ConvexHttpClient(CONVEX_URL);
+function getConvexClient() {
+  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (!url) throw new Error("NEXT_PUBLIC_CONVEX_URL is not set");
+  return new ConvexHttpClient(url);
+}
 
 export async function POST(request: Request) {
   try {
@@ -45,6 +48,7 @@ export async function POST(request: Request) {
     }
 
     // Submit designer application
+    const convex = getConvexClient();
     const designerId = await convex.mutation(api.designers.submitDesignerApplication, {
       firstName,
       lastName,
