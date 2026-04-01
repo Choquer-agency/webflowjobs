@@ -11,6 +11,7 @@ export interface Job {
   publishedAt: string;
   applyUrl?: string;
   isVerified?: boolean;
+  isSponsored?: boolean;
 }
 
 function formatDate(dateStr: string): string {
@@ -32,7 +33,10 @@ function isNew(dateStr: string): boolean {
 
 export default function JobCard({ job }: { job: Job }) {
   return (
-    <div className="posting_item" style={{ position: 'relative' }}>
+    <div className="posting_item" style={{
+      position: 'relative',
+      ...(job.isSponsored ? { border: '2px solid rgb(255, 149, 0)', borderRadius: '0.5rem' } : {}),
+    }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.25rem', padding: '1.5rem' }}>
         {/* Company logo */}
         {job.companyLogoUrl ? (
@@ -86,7 +90,21 @@ export default function JobCard({ job }: { job: Job }) {
 
           {/* Details section */}
           <div className="posting_details" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
-            {isNew(job.publishedAt) && (
+            {job.isSponsored && (
+              <span
+                style={{
+                  backgroundColor: 'rgb(255, 149, 0)',
+                  color: '#fff',
+                  padding: '0.15rem 0.6rem',
+                  borderRadius: '999px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                }}
+              >
+                SPONSORED
+              </span>
+            )}
+            {!job.isSponsored && isNew(job.publishedAt) && (
               <span
                 style={{
                   backgroundColor: 'rgb(255, 149, 0)',

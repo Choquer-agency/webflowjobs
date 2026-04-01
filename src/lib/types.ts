@@ -14,6 +14,9 @@ export interface Job {
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  isSponsored?: boolean;
+  sponsoredUntil?: string | null;
+  companyDomain?: string | null;
 }
 
 export interface Designer {

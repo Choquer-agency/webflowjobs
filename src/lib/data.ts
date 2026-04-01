@@ -24,6 +24,9 @@ async function getConvex() {
 
 function sortJobsDesc(list: Job[]): Job[] {
   return [...list].sort((a, b) => {
+    // Sponsored jobs always come first
+    if (a.isSponsored && !b.isSponsored) return -1;
+    if (!a.isSponsored && b.isSponsored) return 1;
     const da = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
     const db = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
     return db - da;
@@ -239,6 +242,9 @@ function convexDocToJob(doc: any): Job {
     publishedAt: doc.publishedAt ?? null,
     createdAt,
     updatedAt: createdAt,
+    isSponsored: doc.isSponsored ?? false,
+    sponsoredUntil: doc.sponsoredUntil ?? null,
+    companyDomain: doc.companyDomain ?? null,
   };
 }
 

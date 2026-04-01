@@ -18,13 +18,21 @@ export default defineSchema({
     source: v.string(),
     sourceId: v.optional(v.string()),
     publishedAt: v.optional(v.string()),
+    // Outreach & sponsorship fields
+    companyDomain: v.optional(v.string()),
+    contactEmail: v.optional(v.string()),
+    outreachStatus: v.optional(v.string()),
+    isSponsored: v.optional(v.boolean()),
+    sponsoredUntil: v.optional(v.string()),
+    sponsorshipPlan: v.optional(v.string()),
   })
     .index("by_slug", ["slug"])
     .index("by_applyUrl", ["applyUrl"])
     .index("by_source", ["source"])
     .index("by_publishedAt", ["publishedAt"])
     .index("by_category", ["category"])
-    .index("by_companyName", ["companyName"]),
+    .index("by_companyName", ["companyName"])
+    .index("by_outreachStatus", ["outreachStatus"]),
 
   ingestionLogs: defineTable({
     runAt: v.string(),
@@ -35,6 +43,38 @@ export default defineSchema({
     jobsRejected: v.number(),
     errors: v.optional(v.string()),
   }).index("by_runAt", ["runAt"]),
+
+  outreachLog: defineTable({
+    companyDomain: v.string(),
+    companyName: v.string(),
+    contactEmail: v.string(),
+    jobSlugs: v.array(v.string()),
+    sentAt: v.string(),
+    status: v.string(),
+    resendMessageId: v.optional(v.string()),
+  })
+    .index("by_companyDomain", ["companyDomain"])
+    .index("by_sentAt", ["sentAt"]),
+
+  unsubscribes: defineTable({
+    email: v.string(),
+    companyDomain: v.optional(v.string()),
+    unsubscribedAt: v.string(),
+  }).index("by_email", ["email"]),
+
+  sponsorshipPayments: defineTable({
+    jobId: v.id("jobs"),
+    stripeSessionId: v.string(),
+    stripePaymentIntentId: v.optional(v.string()),
+    plan: v.string(),
+    amountCents: v.number(),
+    status: v.string(),
+    companyName: v.string(),
+    createdAt: v.string(),
+    completedAt: v.optional(v.string()),
+  })
+    .index("by_stripeSessionId", ["stripeSessionId"])
+    .index("by_jobId", ["jobId"]),
 
   designers: defineTable({
     firstName: v.string(),

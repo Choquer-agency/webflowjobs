@@ -10,7 +10,7 @@ import {
 // Public Queries (used by the Next.js frontend)
 // ---------------------------------------------------------------------------
 
-/** Returns jobs published within the last 60 days, newest first. */
+/** Returns jobs published within the last 60 days, sponsored first then newest. */
 export const listRecentJobs = query({
   args: {},
   handler: async (ctx) => {
@@ -24,9 +24,15 @@ export const listRecentJobs = query({
       .order("desc")
       .take(500);
 
-    return jobs.filter(
+    const recent = jobs.filter(
       (j) => !j.publishedAt || j.publishedAt >= cutoff
     );
+
+    return recent.sort((a, b) => {
+      if (a.isSponsored && !b.isSponsored) return -1;
+      if (!a.isSponsored && b.isSponsored) return 1;
+      return (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "");
+    });
   },
 });
 
@@ -153,6 +159,12 @@ export const insertJob = mutation({
     source: v.string(),
     sourceId: v.optional(v.string()),
     publishedAt: v.optional(v.string()),
+    companyDomain: v.optional(v.string()),
+    contactEmail: v.optional(v.string()),
+    outreachStatus: v.optional(v.string()),
+    isSponsored: v.optional(v.boolean()),
+    sponsoredUntil: v.optional(v.string()),
+    sponsorshipPlan: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("jobs", args);
@@ -195,10 +207,24 @@ export const patchJob = mutation({
   args: {
     id: v.id("jobs"),
     companyLogoUrl: v.optional(v.string()),
+    contactEmail: v.optional(v.string()),
+    outreachStatus: v.optional(v.string()),
+    isSponsored: v.optional(v.boolean()),
+    sponsoredUntil: v.optional(v.string()),
+    sponsorshipPlan: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const { id, ...fields } = args;
-    await ctx.db.patch(id, fields);
+    // Remove undefined fields so we only patch what's provided
+    const patch: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(fields)) {
+      if (value !== undefined) {
+        patch[key] = value;
+      }
+    }
+    if (Object.keys(patch).length > 0) {
+      await ctx.db.patch(id, patch);
+    }
   },
 });
 

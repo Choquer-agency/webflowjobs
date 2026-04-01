@@ -187,6 +187,9 @@ async function main() {
       ...(classified.aboutCompany
         ? { aboutCompany: classified.aboutCompany }
         : {}),
+      ...(classified.companyDomain
+        ? { companyDomain: classified.companyDomain }
+        : {}),
     });
 
     insertedCount++;

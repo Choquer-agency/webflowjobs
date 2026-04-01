@@ -32,3 +32,12 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           MIN_RELEVANCE_SCORE: '5'
         run: npx tsx scripts/ingest-jobs.ts
+
+      - name: Run outreach pipeline
+        env:
+          CONVEX_URL: ${{ secrets.CONVEX_URL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          HUNTER_API_KEY: ${{ secrets.HUNTER_API_KEY }}
+          OUTREACH_HMAC_SECRET: ${{ secrets.OUTREACH_HMAC_SECRET }}
+          NEXT_PUBLIC_SITE_URL: 'https://www.webflow.jobs'
+        run: npx tsx scripts/outreach-jobs.ts
