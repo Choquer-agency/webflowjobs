@@ -13,6 +13,7 @@ import type * as crons from "../crons.js";
 import type * as designers from "../designers.js";
 import type * as jobs from "../jobs.js";
 import type * as outreach from "../outreach.js";
+import type * as reporting from "../reporting.js";
 import type * as sponsorship from "../sponsorship.js";
 
 import type {
@@ -27,6 +28,7 @@ declare const fullApi: ApiFromModules<{
   designers: typeof designers;
   jobs: typeof jobs;
   outreach: typeof outreach;
+  reporting: typeof reporting;
   sponsorship: typeof sponsorship;
 }>;
 

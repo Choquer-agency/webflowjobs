@@ -41,6 +41,16 @@ export default defineSchema({
     .index("by_outreachStatus", ["outreachStatus"])
     .index("by_agencyOutreachStatus", ["agencyOutreachStatus"]),
 
+  emailClicks: defineTable({
+    linkType: v.string(),
+    companyName: v.string(),
+    companyDomain: v.string(),
+    jobSlug: v.string(),
+    clickedAt: v.string(),
+  })
+    .index("by_clickedAt", ["clickedAt"])
+    .index("by_jobSlug", ["jobSlug"]),
+
   ingestionLogs: defineTable({
     runAt: v.string(),
     source: v.string(),

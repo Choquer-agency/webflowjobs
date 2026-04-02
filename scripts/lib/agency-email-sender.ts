@@ -12,6 +12,8 @@ const CHOQUER_FROM_EMAIL =
   process.env.CHOQUER_FROM_EMAIL || "bryce@choquer.agency";
 const CHOQUER_HMAC_SECRET =
   process.env.CHOQUER_HMAC_SECRET || "default-agency-secret";
+const CHOQUER_CAL_LINK =
+  process.env.CHOQUER_CAL_LINK || "https://cal.com/brycechoquer/discovery";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.webflow.jobs";
 
@@ -40,6 +42,7 @@ const FULLTIME_BENCHMARKS: Record<string, number> = {
 export interface AgencyEmailData {
   contactEmail: string;
   companyName: string;
+  companyDomain: string;
   jobTitle: string;
   jobSlug: string;
   roleLabel: string;
@@ -52,6 +55,21 @@ export interface SendResult {
   success: boolean;
   messageId?: string;
   error?: string;
+}
+
+function buildTrackingUrl(
+  dest: string,
+  linkType: string,
+  data: AgencyEmailData
+): string {
+  const params = new URLSearchParams({
+    dest,
+    t: linkType,
+    cn: data.companyName,
+    cd: data.companyDomain,
+    js: data.jobSlug,
+  });
+  return `${SITE_URL}/api/track?${params.toString()}`;
 }
 
 function generateUnsubscribeToken(email: string): string {
@@ -98,6 +116,12 @@ function buildAgencyEmailHtml(data: AgencyEmailData): string {
     data.category
   );
   const unsubscribeUrl = buildUnsubscribeUrl(data.contactEmail);
+  const calTrackUrl = buildTrackingUrl(CHOQUER_CAL_LINK, "cal", data);
+  const siteTrackUrl = buildTrackingUrl(
+    `${CHOQUER_SITE_URL}/certified-webflow-experts`,
+    "website",
+    data
+  );
 
   return `<!DOCTYPE html>
 <html>
@@ -105,66 +129,36 @@ function buildAgencyEmailHtml(data: AgencyEmailData): string {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f9f9f9;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f9f9f9; padding: 40px 20px;">
-    <tr>
-      <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #ffffff; color: #333;">
+  <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-size: 15px; line-height: 1.6;">
 
-          <!-- Body — no heavy header, feels like a personal email -->
-          <tr>
-            <td style="padding: 32px;">
-              <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0 0 16px;">
-                Hey,
-              </p>
+    <p>Hey,</p>
 
-              <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0 0 16px;">
-                I came across your ${data.roleLabel} posting and thought I'd reach out to see if my agency could help.
-              </p>
+    <p>I came across your ${data.roleLabel} posting and thought I'd reach out to see if my agency could help.</p>
 
-              <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0 0 16px;">
-                I had my team take a look at your listing and here's what we're thinking: ${data.projectScope}
-              </p>
+    <p>I had my team take a look at your listing and here's what we're thinking: ${data.projectScope}</p>
 
-              <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0 0 16px;">
-                We're estimating around <strong>${data.estimatedHours} hours</strong> of work at <strong>${formatMoney(monthlyRetainer)}</strong>. That gets you our full team &mdash; design, development, copy, SEO &mdash; not just one person. And if the scope shifts once we dig in, we can adjust. No contracts, completely flexible.
-              </p>
+    <p>We're estimating around <strong>${data.estimatedHours} hours</strong> of work at <strong>${formatMoney(monthlyRetainer)}</strong>. That gets you our full team &mdash; design, development, copy, SEO &mdash; not just one person. And if the scope shifts once we dig in, we can adjust. No contracts, completely flexible.</p>
 
-              <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0 0 24px;">
-                If you're open to it, happy to jump on a quick call and walk you through how we'd approach it.
-              </p>
+    <p>If you're open to it, happy to jump on a quick call and walk you through how we'd approach it.</p>
 
-              <!-- CTA Button -->
-              <table cellpadding="0" cellspacing="0" style="margin-bottom: 24px;">
-                <tr>
-                  <td style="background-color: #1a1a1a; border-radius: 6px;">
-                    <a href="${CHOQUER_SITE_URL}/certified-webflow-experts" style="display: inline-block; padding: 14px 32px; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 15px;">
-                      See Our Work &amp; Book a Call &rarr;
-                    </a>
-                  </td>
-                </tr>
-              </table>
+    <p style="margin: 24px 0 12px;">
+      <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="50%" fillcolor="#1a1a1a"><center style="color:#ffffff;font-family:sans-serif;font-size:15px;font-weight:bold;">Book a Call &rarr;</center></v:roundrect><![endif]-->
+      <a href="${calTrackUrl}" style="display: inline-block; background-color: #1a1a1a; color: #ffffff; padding: 14px 36px; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 15px; letter-spacing: -0.2px;">Book a Call &rarr;</a>
+    </p>
 
-              <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 16px 0 0;">
-                Bryce<br>
-                <span style="color: #888; font-size: 13px;">Choquer Agency &mdash; <a href="${CHOQUER_SITE_URL}" style="color: #888;">choquer.agency</a></span>
-              </p>
-            </td>
-          </tr>
+    <p style="margin: 0 0 24px;"><a href="${siteTrackUrl}" style="color: #999; font-size: 13px; text-decoration: none;">Our work &mdash; <span style="text-decoration: underline;">visit our website</span></a></p>
 
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #fafafa; padding: 16px 32px; border-top: 1px solid #eee;">
-              <p style="color: #999; font-size: 11px; line-height: 1.5; margin: 0;">
-                <a href="${unsubscribeUrl}" style="color: #999; text-decoration: underline;">Unsubscribe</a> from future emails.
-              </p>
-            </td>
-          </tr>
+    <p>
+      Bryce<br>
+      <span style="color: #888; font-size: 13px;">Choquer Agency</span>
+    </p>
 
-        </table>
-      </td>
-    </tr>
-  </table>
+    <p style="margin-top: 32px; font-size: 11px; color: #bbb;">
+      <a href="${unsubscribeUrl}" style="color: #bbb; text-decoration: underline;">Unsubscribe</a> from future emails.
+    </p>
+
+  </div>
 </body>
 </html>`;
 }

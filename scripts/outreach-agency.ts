@@ -182,6 +182,7 @@ async function main() {
     const emailData: AgencyEmailData = {
       contactEmail,
       companyName: job.companyName,
+      companyDomain: domain,
       jobTitle: job.title,
       jobSlug: job.slug,
       roleLabel: estimate.roleLabel,
