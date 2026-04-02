@@ -21,6 +21,7 @@ export const markOutreachStatus = mutation({
     id: v.id("jobs"),
     outreachStatus: v.string(),
     contactEmail: v.optional(v.string()),
+    outreachSentAt: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const patch: Record<string, unknown> = {
@@ -28,6 +29,9 @@ export const markOutreachStatus = mutation({
     };
     if (args.contactEmail) {
       patch.contactEmail = args.contactEmail;
+    }
+    if (args.outreachSentAt) {
+      patch.outreachSentAt = args.outreachSentAt;
     }
     await ctx.db.patch(args.id, patch);
   },

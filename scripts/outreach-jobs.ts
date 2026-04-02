@@ -168,6 +168,7 @@ async function main() {
           id: job._id as any,
           outreachStatus: "sent",
           contactEmail: emailResult.email,
+          outreachSentAt: new Date().toISOString(),
         });
       }
 

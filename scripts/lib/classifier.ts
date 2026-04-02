@@ -12,6 +12,7 @@ export interface ClassifiedJob {
   cleanTitle: string;
   companyName: string;
   companyDomain: string | null;
+  companyType: "business" | "agency" | "unknown";
   location: string;
   isRemote: boolean;
   aboutCompany: string | null;
@@ -32,6 +33,7 @@ Also extract and return:
 - cleanTitle: the actual job title, cleaned up (remove "... hiring ... in ... | LinkedIn" patterns, remove company name prefixes)
 - companyName: the ACTUAL company that is hiring, NOT the job platform. If the company field says "Upwork", "LinkedIn", "Indeed", "Glassdoor", "ZipRecruiter", or similar job platforms, look in the job description for the real company name. If no real company name can be found, use "Confidential".
 - companyDomain: the company's website domain (e.g., "acme.com") if mentioned or inferable from the description. Return null if unknown. Do NOT return job platform domains like upwork.com or linkedin.com.
+- companyType: classify the hiring company as "business" (end client building their own product/site), "agency" (web design agency, digital agency, marketing agency, creative studio, freelance marketplace, or staffing firm), or "unknown" if unclear. Look for signals like: agency indicators in the company name (e.g., "Agency", "Studio", "Creative", "Digital", "Consulting"), whether the description mentions building for "clients" vs building their own product, and whether the about section describes client work vs a product company.
 - location: the job location, or "Remote" if remote
 - isRemote: true if the job is remote or hybrid-remote
 - aboutCompany: a 1-2 sentence summary of the company from the description, or null if not available

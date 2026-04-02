@@ -22,9 +22,15 @@ export default defineSchema({
     companyDomain: v.optional(v.string()),
     contactEmail: v.optional(v.string()),
     outreachStatus: v.optional(v.string()),
+    outreachSentAt: v.optional(v.string()),
     isSponsored: v.optional(v.boolean()),
     sponsoredUntil: v.optional(v.string()),
     sponsorshipPlan: v.optional(v.string()),
+    // Agency lead generation fields
+    companyType: v.optional(v.string()),
+    estimatedHours: v.optional(v.number()),
+    projectScope: v.optional(v.string()),
+    agencyOutreachStatus: v.optional(v.string()),
   })
     .index("by_slug", ["slug"])
     .index("by_applyUrl", ["applyUrl"])
@@ -32,7 +38,8 @@ export default defineSchema({
     .index("by_publishedAt", ["publishedAt"])
     .index("by_category", ["category"])
     .index("by_companyName", ["companyName"])
-    .index("by_outreachStatus", ["outreachStatus"]),
+    .index("by_outreachStatus", ["outreachStatus"])
+    .index("by_agencyOutreachStatus", ["agencyOutreachStatus"]),
 
   ingestionLogs: defineTable({
     runAt: v.string(),
@@ -106,6 +113,26 @@ export default defineSchema({
     .index("by_status", ["status"])
     .index("by_email", ["email"])
     .index("by_status_and_isSponsored", ["status", "isSponsored"]),
+
+  agencyOutreachLog: defineTable({
+    companyDomain: v.string(),
+    companyName: v.string(),
+    contactEmail: v.string(),
+    jobSlug: v.string(),
+    sentAt: v.string(),
+    status: v.string(),
+    resendMessageId: v.optional(v.string()),
+    estimatedHours: v.number(),
+    quotedPackage: v.string(),
+  })
+    .index("by_companyDomain", ["companyDomain"])
+    .index("by_sentAt", ["sentAt"]),
+
+  agencyUnsubscribes: defineTable({
+    email: v.string(),
+    companyDomain: v.optional(v.string()),
+    unsubscribedAt: v.string(),
+  }).index("by_email", ["email"]),
 
   designerProjects: defineTable({
     designerId: v.id("designers"),

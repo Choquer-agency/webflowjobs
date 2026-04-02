@@ -190,6 +190,9 @@ async function main() {
       ...(classified.companyDomain
         ? { companyDomain: classified.companyDomain }
         : {}),
+      ...(classified.companyType
+        ? { companyType: classified.companyType }
+        : {}),
     });
 
     insertedCount++;

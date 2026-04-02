@@ -162,9 +162,14 @@ export const insertJob = mutation({
     companyDomain: v.optional(v.string()),
     contactEmail: v.optional(v.string()),
     outreachStatus: v.optional(v.string()),
+    outreachSentAt: v.optional(v.string()),
     isSponsored: v.optional(v.boolean()),
     sponsoredUntil: v.optional(v.string()),
     sponsorshipPlan: v.optional(v.string()),
+    companyType: v.optional(v.string()),
+    estimatedHours: v.optional(v.number()),
+    projectScope: v.optional(v.string()),
+    agencyOutreachStatus: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("jobs", args);

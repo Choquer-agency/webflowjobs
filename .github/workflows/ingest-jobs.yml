@@ -41,3 +41,14 @@ jobs:
           OUTREACH_HMAC_SECRET: ${{ secrets.OUTREACH_HMAC_SECRET }}
           NEXT_PUBLIC_SITE_URL: 'https://www.webflow.jobs'
         run: npx tsx scripts/outreach-jobs.ts
+
+      - name: Run agency lead generation pipeline
+        env:
+          CONVEX_URL: ${{ secrets.CONVEX_URL }}
+          CHOQUER_RESEND_API_KEY: ${{ secrets.CHOQUER_RESEND_API_KEY }}
+          CHOQUER_FROM_EMAIL: ${{ secrets.CHOQUER_FROM_EMAIL }}
+          CHOQUER_HMAC_SECRET: ${{ secrets.CHOQUER_HMAC_SECRET }}
+          CHOQUER_SITE_URL: ${{ secrets.CHOQUER_SITE_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NEXT_PUBLIC_SITE_URL: 'https://www.webflow.jobs'
+        run: npx tsx scripts/outreach-agency.ts

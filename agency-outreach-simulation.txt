@@ -1,0 +1,260 @@
+=== Choquer Agency Outreach Pipeline ===
+Run at: 2026-04-01T14:00:00.000Z
+
+[1/4] Fetching jobs eligible for agency outreach...
+  Found 5 jobs with outreachStatus="sent" and outreachSentAt > 20 hours ago
+
+================================================================================
+JOB 1 OF 5
+================================================================================
+
+  Company:  JDA Worldwide
+  Title:    Web Developer (Webflow & No-Code)
+  Category: Webflow Developer
+  Type:     Full-time
+  Location: Indianapolis, IN
+  Domain:   jdaworldwide.com
+
+  --- CLASSIFICATION ---
+  companyType: AGENCY
+  Reason: "Leading full-service marketing agency since 2003."
+          Description says they build sites for clients across brands.
+
+  --- DECISION ---
+  SKIP — Agency. They do what we do.
+
+  Status: agencyOutreachStatus = "skipped"
+
+================================================================================
+JOB 2 OF 5
+================================================================================
+
+  Company:  Cleo
+  Title:    Digital Designer, Email & Landing Pages
+  Category: Designer
+  Type:     Full-time
+  Location: New York, NY (Hybrid)
+  Domain:   meetcleo.com
+
+  --- CLASSIFICATION ---
+  companyType: BUSINESS
+  Reason: Fintech product company, $200M+ ARR. Building their own app.
+
+  --- HOUR ESTIMATION ---
+  Role label: digital designer
+  Scope: You mentioned needing someone to build email templates and
+         landing pages in Webflow and Framer, plus create modular
+         design system components for your CRM. Looks like there's
+         also some Figma-to-Webflow handoff work and A/B testing
+         for your growth campaigns.
+  Estimated hours: 15h
+  Cost: $3,150
+
+  --- DECISION ---
+  SEND
+
+  --- EMAIL ---
+
+  From: Bryce at Choquer Agency <bryce@choquer.agency>
+  To: [contact@meetcleo.com via Hunter.io]
+  Subject: Cleo — re: your digital designer posting
+
+  ─────────────────────────────────────────────────────────────────────
+
+  Hey,
+
+  I came across your digital designer posting on Webflow Jobs and
+  thought I'd reach out to see if my agency could help.
+
+  I had my team take a look at your listing and here's what we're
+  thinking: you mentioned needing someone to build email templates
+  and landing pages in Webflow and Framer, plus create modular
+  design system components for your CRM. Looks like there's also
+  some Figma-to-Webflow handoff work and A/B testing for your
+  growth campaigns.
+
+  We're estimating around 15 hours of work at $3,150. That gets
+  you our full team — design, development, copy, SEO — not just
+  one person. And if the scope shifts once we dig in, we can
+  adjust. No contracts, completely flexible.
+
+  If you're open to it, happy to jump on a quick call and walk
+  you through how we'd approach it.
+
+  [See Our Work & Book a Call →]
+
+  Bryce
+  Choquer Agency — choquer.agency
+
+  ─────────────────────────────────────────────────────────────────────
+
+  Status: agencyOutreachStatus = "sent"
+  Logged: agencyOutreachLog (15h/$3,150)
+
+================================================================================
+JOB 3 OF 5
+================================================================================
+
+  Company:  Wonderist Agency
+  Title:    Strategic Copywriter
+  Category: Other
+  Type:     Remote
+  Location: Remote
+  Domain:   wonderistagency.com
+
+  --- CLASSIFICATION ---
+  companyType: AGENCY
+  Reason: "Creative marketing firm." 70+ person team. 1,000+ dental
+          clients. Agency is in the name.
+
+  --- DECISION ---
+  SKIP — Agency.
+
+  Status: agencyOutreachStatus = "skipped"
+
+================================================================================
+JOB 4 OF 5
+================================================================================
+
+  Company:  The Solar Experts
+  Title:    Digital Marketing Specialist
+  Category: SEO
+  Type:     Part-time
+  Location: Albuquerque, NM
+  Domain:   thesolarexperts.com
+
+  --- CLASSIFICATION ---
+  companyType: BUSINESS
+  Reason: Solar energy company. They sell solar installations to
+          homeowners — need marketing for their own business.
+
+  --- HOUR ESTIMATION ---
+  Role label: marketing specialist
+  Scope: Looks like you need someone to handle SEO and content
+         updates for your site on an ongoing basis, plus some
+         website tweaks to improve lead gen for your solar
+         services. The listing mentioned it's part-time, so this
+         is more of a steady monthly engagement than a big build.
+  Estimated hours: 10h
+  Cost: $2,200
+
+  --- DECISION ---
+  SEND
+
+  --- EMAIL ---
+
+  From: Bryce at Choquer Agency <bryce@choquer.agency>
+  To: [info@thesolarexperts.com via Hunter.io]
+  Subject: The Solar Experts — re: your marketing specialist posting
+
+  ─────────────────────────────────────────────────────────────────────
+
+  Hey,
+
+  I came across your marketing specialist posting on Webflow Jobs
+  and thought I'd reach out to see if my agency could help.
+
+  I had my team take a look at your listing and here's what we're
+  thinking: looks like you need someone to handle SEO and content
+  updates for your site on an ongoing basis, plus some website
+  tweaks to improve lead gen for your solar services. The listing
+  mentioned it's part-time, so this is more of a steady monthly
+  engagement than a big build.
+
+  We're estimating around 10 hours a month at $2,200. That gets
+  you our full team — design, development, copy, SEO — not just
+  one person. And if the scope shifts once we dig in, we can
+  adjust. No contracts, completely flexible.
+
+  If you're open to it, happy to jump on a quick call and walk
+  you through how we'd approach it.
+
+  [See Our Work & Book a Call →]
+
+  Bryce
+  Choquer Agency — choquer.agency
+
+  ─────────────────────────────────────────────────────────────────────
+
+  Status: agencyOutreachStatus = "sent"
+  Logged: agencyOutreachLog (10h/$2,200)
+
+================================================================================
+JOB 5 OF 5
+================================================================================
+
+  Company:  HoneyBook
+  Title:    Remote Webflow Developer (Contract)
+  Category: Webflow Developer
+  Type:     Contract (6 months, up to 40hrs/week)
+  Location: Remote (PST preferred)
+  Domain:   honeybook.com
+
+  --- CLASSIFICATION ---
+  companyType: BUSINESS
+  Reason: SaaS product company. AI-powered business management
+          platform. $12B+ processed. Building their own marketing site.
+
+  --- HOUR ESTIMATION ---
+  Role label: webflow developer
+  Scope: Your listing calls out building new landing pages and
+         campaign modules in Webflow, writing custom JavaScript for
+         personalization and event tracking, and getting Mixpanel
+         and GA wired up properly. There's also a performance audit
+         piece — Lighthouse scores, page load optimization — and
+         you want the whole dev workflow documented for your team.
+  Estimated hours: 30h
+  Cost: $5,700
+
+  --- DECISION ---
+  SEND
+
+  --- EMAIL ---
+
+  From: Bryce at Choquer Agency <bryce@choquer.agency>
+  To: [contact@honeybook.com via Hunter.io]
+  Subject: HoneyBook — re: your webflow developer posting
+
+  ─────────────────────────────────────────────────────────────────────
+
+  Hey,
+
+  I came across your webflow developer posting on Webflow Jobs and
+  thought I'd reach out to see if my agency could help.
+
+  I had my team take a look at your listing and here's what we're
+  thinking: your listing calls out building new landing pages and
+  campaign modules in Webflow, writing custom JavaScript for
+  personalization and event tracking, and getting Mixpanel and GA
+  wired up properly. There's also a performance audit piece —
+  Lighthouse scores, page load optimization — and you want the
+  whole dev workflow documented for your team.
+
+  We're estimating around 30 hours of work at $5,700. That gets
+  you our full team — design, development, copy, SEO — not just
+  one person. And if the scope shifts once we dig in, we can
+  adjust. No contracts, completely flexible.
+
+  If you're open to it, happy to jump on a quick call and walk
+  you through how we'd approach it.
+
+  [See Our Work & Book a Call →]
+
+  Bryce
+  Choquer Agency — choquer.agency
+
+  ─────────────────────────────────────────────────────────────────────
+
+  Status: agencyOutreachStatus = "sent"
+  Logged: agencyOutreachLog (30h/$5,700)
+
+================================================================================
+PIPELINE SUMMARY
+================================================================================
+
+  Jobs processed:   5
+  Agencies skipped: 2  (JDA Worldwide, Wonderist Agency)
+  Emails sent:      3  (Cleo, The Solar Experts, HoneyBook)
+  Emails failed:    0
+
+Done!
