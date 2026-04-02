@@ -155,16 +155,19 @@ async function main() {
     });
   }
 
+  // --- BUILD WEBFLOW SENT LOOKUP (company domain → true) ---
+  const webflowSentDomains = new Set<string>();
+  for (const e of webflowEmails) {
+    webflowSentDomains.add(e.companyDomain);
+  }
+
   // --- BUILD HTML ---
   const html = buildReportHtml({
     todaysJobs,
     todaysAgencyEmails,
-    todaysWebflowEmails,
     clicksByDay,
     emailsByDay,
-    totalJobs7d: jobs.length,
-    totalAgencyEmails7d: agencyEmails.length,
-    totalClicks7d: clicks.length,
+    webflowSentDomains,
   });
 
   // --- SEND ---
@@ -196,7 +199,6 @@ async function main() {
 interface ReportData {
   todaysJobs: any[];
   todaysAgencyEmails: any[];
-  todaysWebflowEmails: any[];
   clicksByDay: {
     day: string;
     label: string;
@@ -205,9 +207,7 @@ interface ReportData {
     companies: Set<string>;
   }[];
   emailsByDay: { label: string; count: number; companies: string[] }[];
-  totalJobs7d: number;
-  totalAgencyEmails7d: number;
-  totalClicks7d: number;
+  webflowSentDomains: Set<string>;
 }
 
 function buildReportHtml(data: ReportData): string {
@@ -220,19 +220,23 @@ function buildReportHtml(data: ReportData): string {
     "text-align: left; padding: 8px 12px; background: #f5f5f5; border-bottom: 1px solid #eee; font-weight: 600; color: #555;";
   const tdStyle =
     "padding: 8px 12px; border-bottom: 1px solid #f0f0f0; color: #333;";
+  const checkmark = '<span style="color: #16a34a; font-weight: 700;">&#10003;</span>';
+  const dash = '<span style="color: #ccc;">—</span>';
 
-  // --- Today's Jobs ---
+  // --- Today's Jobs (with W. Sent column) ---
   let jobsHtml = "";
   if (data.todaysJobs.length === 0) {
     jobsHtml = '<p style="color: #888; font-size: 13px;">No new jobs today.</p>';
   } else {
     const rows = data.todaysJobs
-      .map(
-        (j: any) =>
-          `<tr><td style="${tdStyle}">${j.title}</td><td style="${tdStyle}">${j.companyName}</td><td style="${tdStyle}">${j.category || "—"}</td><td style="${tdStyle}">${j.companyType || "—"}</td></tr>`
-      )
+      .map((j: any) => {
+        const wSent = j.companyDomain && data.webflowSentDomains.has(j.companyDomain)
+          ? checkmark
+          : dash;
+        return `<tr><td style="${tdStyle}">${j.title}</td><td style="${tdStyle}">${j.companyName}</td><td style="${tdStyle}">${j.category || "—"}</td><td style="${tdStyle} text-align: center;">${wSent}</td></tr>`;
+      })
       .join("");
-    jobsHtml = `<table style="${tableStyle}"><tr><th style="${thStyle}">Title</th><th style="${thStyle}">Company</th><th style="${thStyle}">Category</th><th style="${thStyle}">Type</th></tr>${rows}</table>`;
+    jobsHtml = `<table style="${tableStyle}"><tr><th style="${thStyle}">Title</th><th style="${thStyle}">Company</th><th style="${thStyle}">Category</th><th style="${thStyle} text-align: center;">W. Sent</th></tr>${rows}</table>`;
   }
 
   // --- Today's Agency Emails ---
@@ -250,54 +254,41 @@ function buildReportHtml(data: ReportData): string {
     agencyHtml = `<table style="${tableStyle}"><tr><th style="${thStyle}">Company</th><th style="${thStyle}">Email</th><th style="${thStyle}">Quoted</th></tr>${rows}</table>`;
   }
 
-  // --- Today's Webflow Emails ---
-  let webflowHtml = "";
-  if (data.todaysWebflowEmails.length === 0) {
-    webflowHtml =
-      '<p style="color: #888; font-size: 13px;">No webflow.jobs emails sent today.</p>';
-  } else {
-    const rows = data.todaysWebflowEmails
-      .map(
-        (e: any) =>
-          `<tr><td style="${tdStyle}">${e.companyName}</td><td style="${tdStyle}">${e.contactEmail}</td><td style="${tdStyle}">${e.jobSlugs?.length || 0} job(s)</td></tr>`
-      )
-      .join("");
-    webflowHtml = `<table style="${tableStyle}"><tr><th style="${thStyle}">Company</th><th style="${thStyle}">Email</th><th style="${thStyle}">Jobs</th></tr>${rows}</table>`;
-  }
-
   // --- Click Performance (7-day breakdown) ---
   const clickRows = data.clicksByDay
     .map((d) => {
       const total = d.cal + d.website;
+      const hasClicks = total > 0;
       const companyList =
-        d.companies.size > 0 ? [...d.companies].join(", ") : "—";
+        d.companies.size > 0 ? [...d.companies].join(", ") : "";
       const calColor = d.cal > 0 ? "color: #16a34a; font-weight: 600;" : "";
       const webColor =
         d.website > 0 ? "color: #2563eb; font-weight: 600;" : "";
-      return `<tr>
+      const rowBg = hasClicks ? "background-color: #f0fdf4;" : "";
+      return `<tr style="${rowBg}">
         <td style="${tdStyle} font-weight: 600;">${d.label}</td>
         <td style="${tdStyle}">${d.day}</td>
         <td style="${tdStyle} ${calColor}">${d.cal}</td>
         <td style="${tdStyle} ${webColor}">${d.website}</td>
-        <td style="${tdStyle}">${total}</td>
-        <td style="${tdStyle} font-size: 12px; color: #666;">${companyList}</td>
+        <td style="${tdStyle} font-weight: 600;">${total}</td>
+        ${companyList ? `<td style="${tdStyle} font-size: 12px; color: #555;">${companyList}</td>` : `<td style="${tdStyle}"></td>`}
       </tr>`;
     })
     .join("");
 
   const clicksHtml = `<table style="${tableStyle}">
     <tr>
-      <th style="${thStyle}">Day</th>
+      <th style="${thStyle}"></th>
       <th style="${thStyle}">Date</th>
-      <th style="${thStyle}">📞 Book a Call</th>
-      <th style="${thStyle}">🌐 Website</th>
+      <th style="${thStyle}">Book a Call</th>
+      <th style="${thStyle}">Website</th>
       <th style="${thStyle}">Total</th>
-      <th style="${thStyle}">Companies</th>
+      <th style="${thStyle}">Who Clicked</th>
     </tr>
     ${clickRows}
   </table>`;
 
-  // --- 7-Day Email Summary ---
+  // --- 7-Day Agency Email Summary ---
   const emailSummaryRows = data.emailsByDay
     .filter((d) => d.count > 0)
     .map(
@@ -330,7 +321,7 @@ function buildReportHtml(data: ReportData): string {
         <td style="width: 8px;"></td>
         <td style="background: #f5f5f5; border-radius: 8px; padding: 16px; text-align: center; width: 33%;">
           <div style="font-size: 28px; font-weight: 700; color: #1a1a1a;">${data.todaysAgencyEmails.length}</div>
-          <div style="font-size: 12px; color: #888; margin-top: 4px;">Emails Sent</div>
+          <div style="font-size: 12px; color: #888; margin-top: 4px;">Agency Emails</div>
         </td>
         <td style="width: 8px;"></td>
         <td style="background: #f5f5f5; border-radius: 8px; padding: 16px; text-align: center; width: 33%;">
@@ -351,23 +342,14 @@ function buildReportHtml(data: ReportData): string {
     </div>
 
     <div style="${sectionStyle}">
-      <h2 style="${h2Style}">Webflow.jobs Emails Sent Today</h2>
-      ${webflowHtml}
-    </div>
-
-    <div style="${sectionStyle}">
       <h2 style="${h2Style}">Click Performance (7 Days)</h2>
       ${clicksHtml}
     </div>
 
     <div style="margin-bottom: 28px;">
-      <h2 style="${h2Style}">Agency Emails — 7 Day Summary</h2>
+      <h2 style="${h2Style}">Agency Emails — 7 Day History</h2>
       ${emailSummaryHtml}
     </div>
-
-    <p style="font-size: 11px; color: #bbb; margin-top: 32px;">
-      7-day totals: ${data.totalJobs7d} jobs | ${data.totalAgencyEmails7d} agency emails | ${data.totalClicks7d} clicks
-    </p>
 
   </div>
 </body>
