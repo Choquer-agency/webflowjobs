@@ -2,7 +2,7 @@ name: Daily Job Ingestion
 
 on:
   schedule:
-    # Run every day at 8:00 AM UTC
+    # Run every day at 8:00 AM UTC (3:00 AM PT / 4:00 AM ET)
     - cron: '0 8 * * *'
   workflow_dispatch:
     # Allow manual triggering from GitHub Actions UI
@@ -25,6 +25,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Step 1: Find and post new jobs
       - name: Run ingestion pipeline
         env:
           CONVEX_URL: ${{ secrets.CONVEX_URL }}
@@ -33,6 +34,7 @@ jobs:
           MIN_RELEVANCE_SCORE: '5'
         run: npx tsx scripts/ingest-jobs.ts
 
+      # Step 2: Send "your job is live" webflow.jobs emails
       - name: Run outreach pipeline
         env:
           CONVEX_URL: ${{ secrets.CONVEX_URL }}
@@ -42,6 +44,8 @@ jobs:
           NEXT_PUBLIC_SITE_URL: 'https://www.webflow.jobs'
         run: npx tsx scripts/outreach-jobs.ts
 
+      # Step 3: Send Choquer Agency pitch emails (only to businesses
+      # whose webflow.jobs email was sent 20+ hours ago — yesterday's jobs)
       - name: Run agency lead generation pipeline
         env:
           CONVEX_URL: ${{ secrets.CONVEX_URL }}
@@ -52,11 +56,3 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           NEXT_PUBLIC_SITE_URL: 'https://www.webflow.jobs'
         run: npx tsx scripts/outreach-agency.ts
-
-      - name: Send daily report
-        env:
-          CONVEX_URL: ${{ secrets.CONVEX_URL }}
-          CHOQUER_RESEND_API_KEY: ${{ secrets.CHOQUER_RESEND_API_KEY }}
-          CHOQUER_FROM_EMAIL: ${{ secrets.CHOQUER_FROM_EMAIL }}
-          REPORT_TO_EMAIL: ${{ secrets.REPORT_TO_EMAIL }}
-        run: npx tsx scripts/daily-report.ts
