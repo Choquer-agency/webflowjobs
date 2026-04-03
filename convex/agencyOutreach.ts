@@ -15,14 +15,15 @@ export const getJobsPendingAgencyOutreach = query({
       Date.now() - 20 * 60 * 60 * 1000
     ).toISOString();
 
+    // Scan jobs with outreachStatus === "sent" via the index, then filter
+    // for those eligible for agency outreach.
     const jobs = await ctx.db
       .query("jobs")
-      .withIndex("by_outreachStatus")
+      .withIndex("by_outreachStatus", (q) => q.eq("outreachStatus", "sent"))
       .take(500);
 
     return jobs.filter(
       (j) =>
-        j.outreachStatus === "sent" &&
         j.companyType === "business" &&
         !j.agencyOutreachStatus &&
         j.companyDomain &&

@@ -5,11 +5,13 @@ import { query, mutation } from "./_generated/server";
 export const getJobsPendingOutreach = query({
   args: {},
   handler: async (ctx) => {
-    // Jobs with no outreachStatus are newly inserted and need outreach
+    // Jobs with no outreachStatus are newly inserted and need outreach.
+    // Scan recent jobs by creation time (desc) since new jobs won't have
+    // a value in the outreachStatus index.
     const jobs = await ctx.db
       .query("jobs")
-      .withIndex("by_outreachStatus")
-      .take(200);
+      .order("desc")
+      .take(500);
 
     return jobs.filter((j) => !j.outreachStatus && j.companyDomain);
   },
