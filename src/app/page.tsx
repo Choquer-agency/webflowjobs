@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import Script from 'next/script';
 import { getJobs } from '@/lib/data';
+
+/** Re-fetch job data every 15 minutes so new jobs appear without a redeploy. */
+export const revalidate = 900;
 import { CountrySelect } from '@/components/home';
 import AccordionToggle from '@/components/home/AccordionToggle';
 import JobFilterClient from '@/components/home/JobFilterClient';

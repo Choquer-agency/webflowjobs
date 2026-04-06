@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getJobsByCategory, getJobsByType, getRemoteJobs } from '@/lib/data';
+
+export const revalidate = 900;
 import type { Job } from '@/lib/types';
 
 const BASE_URL = 'https://www.webflow.jobs';

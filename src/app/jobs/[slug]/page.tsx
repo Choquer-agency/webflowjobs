@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getJobs, getAllJobs, getJobBySlug } from '@/lib/data';
+
+export const revalidate = 900;
 import type { Job } from '@/lib/types';
 import RichTextContent from '@/components/ui/RichTextContent';
 import ApplyPopup from '@/components/ApplyPopup';
