@@ -168,11 +168,14 @@ export default function ApplyPopup({ jobTitle, companyName, jobSlug, applyUrl, c
               </form>
             ) : (
               <div className="center-heading-content">
-                <p className="text-color-orange text-size-medium">Thanks For Visiting Webflow Jobs</p>
-                <p className="heading-style-h2">Good Luck With Your Application!</p>
+                <p className="text-color-orange text-size-medium">Got it, {firstName}</p>
+                <p className="heading-style-h2">One more step</p>
+                <p>
+                  Your details are saved. Now head to <strong>{companyName}</strong> to complete your application for <strong>{jobTitle}</strong> — it opens in a new tab.
+                </p>
                 <div className="button-group centered">
                   <button onClick={handleOpenApplication} className="button w-button">
-                    Open Application
+                    Apply at {companyName} →
                   </button>
                 </div>
               </div>
