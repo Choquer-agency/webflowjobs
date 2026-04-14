@@ -387,6 +387,7 @@ export default async function JobDetailPage({
                       <ApplyPopup
                         jobTitle={job.title}
                         companyName={job.companyName}
+                        jobSlug={job.slug}
                         applyUrl={job.applyUrl}
                       >
                         <span

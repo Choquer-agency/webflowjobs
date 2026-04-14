@@ -91,13 +91,13 @@ async function main() {
 
   // Step 2: Deduplicate against Convex
   console.log("\n[2/5] Deduplicating against existing jobs...");
-  const newJobs = await filterNewJobs(allJobs, convex);
-  const duplicateCount = allJobs.length - newJobs.length;
+  const dedupResults = await filterNewJobs(allJobs, convex);
+  const duplicateCount = allJobs.length - dedupResults.length;
   console.log(
-    `  ${newJobs.length} new candidates (${duplicateCount} duplicates skipped)`
+    `  ${dedupResults.length} new candidates (${duplicateCount} duplicates skipped)`
   );
 
-  if (newJobs.length === 0) {
+  if (dedupResults.length === 0) {
     console.log("No new jobs to process. Exiting.");
     await logRun(runAt, allJobs.length, 0, duplicateCount, 0, errors);
     return;
@@ -106,11 +106,11 @@ async function main() {
   // Step 3: Classify with Claude AI
   console.log("\n[3/5] Classifying with Claude AI...");
   const classifications = await classifyBatch(
-    newJobs.map((j) => ({
-      title: j.title,
-      company: j.company,
-      description: j.description,
-      location: j.location,
+    dedupResults.map(({ job }) => ({
+      title: job.title,
+      company: job.company,
+      description: job.description,
+      location: job.location,
     })),
     ANTHROPIC_API_KEY!
   );
@@ -120,8 +120,8 @@ async function main() {
   let rejectedCount = 0;
   let insertedCount = 0;
 
-  for (let i = 0; i < newJobs.length; i++) {
-    const raw = newJobs[i];
+  for (let i = 0; i < dedupResults.length; i++) {
+    const { job: raw, applyUrlNormalized, dedupeKey } = dedupResults[i];
     const classified = classifications[i];
 
     if (!classified || classified.relevanceScore < MIN_SCORE) {
@@ -193,6 +193,8 @@ async function main() {
       ...(classified.companyType
         ? { companyType: classified.companyType }
         : {}),
+      ...(applyUrlNormalized ? { applyUrlNormalized } : {}),
+      dedupeKey,
     });
 
     insertedCount++;

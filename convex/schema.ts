@@ -18,6 +18,8 @@ export default defineSchema({
     source: v.string(),
     sourceId: v.optional(v.string()),
     publishedAt: v.optional(v.string()),
+    applyUrlNormalized: v.optional(v.string()),
+    dedupeKey: v.optional(v.string()),
     // Outreach & sponsorship fields
     companyDomain: v.optional(v.string()),
     contactEmail: v.optional(v.string()),
@@ -39,7 +41,9 @@ export default defineSchema({
     .index("by_category", ["category"])
     .index("by_companyName", ["companyName"])
     .index("by_outreachStatus", ["outreachStatus"])
-    .index("by_agencyOutreachStatus", ["agencyOutreachStatus"]),
+    .index("by_agencyOutreachStatus", ["agencyOutreachStatus"])
+    .index("by_applyUrlNormalized", ["applyUrlNormalized"])
+    .index("by_dedupeKey", ["dedupeKey"]),
 
   emailClicks: defineTable({
     linkType: v.string(),
@@ -143,6 +147,19 @@ export default defineSchema({
     companyDomain: v.optional(v.string()),
     unsubscribedAt: v.string(),
   }).index("by_email", ["email"]),
+
+  applicants: defineTable({
+    firstName: v.string(),
+    lastName: v.string(),
+    email: v.string(),
+    jobSlug: v.string(),
+    jobTitle: v.string(),
+    companyName: v.string(),
+    submittedAt: v.string(),
+  })
+    .index("by_email", ["email"])
+    .index("by_submittedAt", ["submittedAt"])
+    .index("by_jobSlug", ["jobSlug"]),
 
   designerProjects: defineTable({
     designerId: v.id("designers"),

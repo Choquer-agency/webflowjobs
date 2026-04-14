@@ -9,6 +9,7 @@
  */
 
 import type * as agencyOutreach from "../agencyOutreach.js";
+import type * as applicants from "../applicants.js";
 import type * as crons from "../crons.js";
 import type * as designers from "../designers.js";
 import type * as jobs from "../jobs.js";
@@ -24,6 +25,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   agencyOutreach: typeof agencyOutreach;
+  applicants: typeof applicants;
   crons: typeof crons;
   designers: typeof designers;
   jobs: typeof jobs;

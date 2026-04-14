@@ -122,7 +122,48 @@ export const getByApplyUrl = query({
     return await ctx.db
       .query("jobs")
       .withIndex("by_applyUrl", (q) => q.eq("applyUrl", args.applyUrl))
-      .unique();
+      .first();
+  },
+});
+
+/** Check if a job with this normalized applyUrl already exists. */
+export const getByApplyUrlNormalized = query({
+  args: { applyUrlNormalized: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("jobs")
+      .withIndex("by_applyUrlNormalized", (q) =>
+        q.eq("applyUrlNormalized", args.applyUrlNormalized)
+      )
+      .first();
+  },
+});
+
+/**
+ * Check if a job with this dedupeKey exists. Returns the most recently
+ * published match so callers can apply a cool-down window.
+ */
+export const getByDedupeKey = query({
+  args: { dedupeKey: v.string() },
+  handler: async (ctx, args) => {
+    const matches = await ctx.db
+      .query("jobs")
+      .withIndex("by_dedupeKey", (q) => q.eq("dedupeKey", args.dedupeKey))
+      .take(50);
+    if (matches.length === 0) return null;
+    return matches.reduce((newest, job) => {
+      const a = job.publishedAt ?? "";
+      const b = newest.publishedAt ?? "";
+      return a > b ? job : newest;
+    });
+  },
+});
+
+/** Iterate all jobs for the backfill script. */
+export const listAllForBackfill = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("jobs").take(5000);
   },
 });
 
@@ -170,6 +211,8 @@ export const insertJob = mutation({
     estimatedHours: v.optional(v.number()),
     projectScope: v.optional(v.string()),
     agencyOutreachStatus: v.optional(v.string()),
+    applyUrlNormalized: v.optional(v.string()),
+    dedupeKey: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("jobs", args);
@@ -217,6 +260,8 @@ export const patchJob = mutation({
     isSponsored: v.optional(v.boolean()),
     sponsoredUntil: v.optional(v.string()),
     sponsorshipPlan: v.optional(v.string()),
+    applyUrlNormalized: v.optional(v.string()),
+    dedupeKey: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const { id, ...fields } = args;

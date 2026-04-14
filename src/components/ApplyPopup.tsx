@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from 'react';
 interface ApplyPopupProps {
   jobTitle: string;
   companyName: string;
+  jobSlug: string;
   applyUrl: string;
   children: React.ReactNode;
 }
@@ -20,9 +21,11 @@ function getStoredApplicant(): { firstName: string; lastName: string; email: str
   return null;
 }
 
-export default function ApplyPopup({ jobTitle, companyName, applyUrl, children }: ApplyPopupProps) {
+export default function ApplyPopup({ jobTitle, companyName, jobSlug, applyUrl, children }: ApplyPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -51,14 +54,29 @@ export default function ApplyPopup({ jobTitle, companyName, applyUrl, children }
     setIsOpen(true);
   }, [applyUrl]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+    setError(null);
 
-    // Save to localStorage
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ firstName, lastName, email }));
-
-    // Show success state
-    setSubmitted(true);
+    try {
+      const res = await fetch('/api/applicants', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firstName, lastName, email, jobSlug, jobTitle, companyName }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Could not save. Please try again.');
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ firstName, lastName, email }));
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleOpenApplication = () => {
@@ -139,9 +157,12 @@ export default function ApplyPopup({ jobTitle, companyName, applyUrl, children }
                     required
                   />
                 </div>
+                {error && (
+                  <p style={{ color: '#c00', marginTop: '0.5rem' }}>{error}</p>
+                )}
                 <div className="button-group mt-0">
-                  <button type="submit" className="button w-button">
-                    Unlock Application Link
+                  <button type="submit" className="button w-button" disabled={submitting}>
+                    {submitting ? 'Saving…' : 'Unlock Application Link'}
                   </button>
                 </div>
               </form>

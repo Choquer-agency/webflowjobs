@@ -115,17 +115,36 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function normalizeApplyUrl(url: string | null): string | null {
+  if (!url) return null;
+  try {
+    const u = new URL(url.trim());
+    const host = u.hostname.toLowerCase().replace(/^www\./, "");
+    const path = u.pathname.replace(/\/+$/, "") || "/";
+    return `${host}${path}`.toLowerCase();
+  } catch {
+    return url.trim().toLowerCase();
+  }
+}
+
 export async function fetchJSearchJobs(apiKey: string): Promise<RawJob[]> {
   // Run queries sequentially with delay to avoid rate limits
-  const seen = new Set<string>();
+  const seenIds = new Set<string>();
+  const seenUrls = new Set<string>();
   const jobs: RawJob[] = [];
   let skippedPlatforms = 0;
 
   for (const query of SEARCH_QUERIES) {
     const batch = await searchJobs(query, apiKey);
     for (const job of batch) {
-      if (seen.has(job.sourceId)) continue;
-      seen.add(job.sourceId);
+      if (seenIds.has(job.sourceId)) continue;
+      seenIds.add(job.sourceId);
+
+      // Same posting can surface across queries with a different job_id but
+      // the same apply URL — normalize before comparing to catch those.
+      const urlKey = normalizeApplyUrl(job.applyUrl);
+      if (urlKey && seenUrls.has(urlKey)) continue;
+      if (urlKey) seenUrls.add(urlKey);
 
       // Skip jobs from freelance platforms (no real company info)
       if (EXCLUDED_EMPLOYERS.has(job.company.toLowerCase())) {

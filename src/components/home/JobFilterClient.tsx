@@ -178,7 +178,7 @@ export default function JobFilterClient({ jobs }: JobFilterClientProps) {
                 </div>
               </div>
               <div className="heading-content align-bottom z-index-2">
-                <ApplyPopup jobTitle={job.title} companyName={job.companyName} applyUrl={job.applyUrl || '#'}>
+                <ApplyPopup jobTitle={job.title} companyName={job.companyName} jobSlug={job.slug} applyUrl={job.applyUrl || '#'}>
                   <span className="button w-button">Apply</span>
                 </ApplyPopup>
               </div>
