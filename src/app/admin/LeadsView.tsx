@@ -1,9 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { logout } from "./actions";
 
-type Applicant = {
+export type Applicant = {
   _id: string;
   firstName: string;
   lastName: string;
@@ -59,7 +58,7 @@ function formatDate(iso: string): string {
   });
 }
 
-export function LeadsDashboard({ applicants }: { applicants: Applicant[] }) {
+export function LeadsView({ applicants }: { applicants: Applicant[] }) {
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [onlyRepeat, setOnlyRepeat] = useState(false);
@@ -132,42 +131,24 @@ export function LeadsDashboard({ applicants }: { applicants: Applicant[] }) {
   }
 
   return (
-    <div
-      style={{
-        maxWidth: 1200,
-        margin: "0 auto",
-        padding: "140px 24px 60px",
-        fontFamily: "Roboto Mono, monospace",
-        color: "#111",
-      }}
-    >
+    <div>
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: 24,
+          marginBottom: 16,
           flexWrap: "wrap",
           gap: 12,
         }}
       >
-        <div>
-          <h1 style={{ margin: 0, fontSize: 24 }}>Leads</h1>
-          <p style={{ margin: "4px 0 0", color: "#666", fontSize: 13 }}>
-            {leads.length} unique applicants · {applicants.length} total
-            applications · {repeatCount} repeat applicants
-          </p>
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={exportCsv} style={btnSecondary}>
-            Export CSV
-          </button>
-          <form action={logout}>
-            <button type="submit" style={btnSecondary}>
-              Sign out
-            </button>
-          </form>
-        </div>
+        <p style={{ margin: 0, color: "#666", fontSize: 13 }}>
+          {leads.length} unique applicants · {applicants.length} total
+          applications · {repeatCount} repeat applicants
+        </p>
+        <button onClick={exportCsv} style={btnSecondary}>
+          Export CSV
+        </button>
       </div>
 
       <div

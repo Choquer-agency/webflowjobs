@@ -170,4 +170,33 @@ export default defineSchema({
     role: v.optional(v.string()),
     sortOrder: v.number(),
   }).index("by_designerId", ["designerId"]),
+
+  jobSubmissions: defineTable({
+    title: v.string(),
+    jobDescription: v.string(),
+    jobType: v.string(),
+    category: v.string(),
+    location: v.string(),
+    postingEmail: v.string(),
+    postingUrl: v.optional(v.string()),
+    companyName: v.string(),
+    companyLogoUrl: v.optional(v.string()),
+    companyWebsite: v.string(),
+    aboutCompany: v.string(),
+    salaryMin: v.optional(v.number()),
+    salaryMax: v.optional(v.number()),
+    salaryCurrency: v.optional(v.string()),
+    salaryPeriod: v.optional(v.string()),
+    comments: v.optional(v.string()),
+    wantsEmailBlast: v.optional(v.boolean()),
+    wants4WeekSpotlight: v.optional(v.boolean()),
+    wants1WeekSpotlight: v.optional(v.boolean()),
+    status: v.string(),
+    submittedAt: v.string(),
+    reviewedAt: v.optional(v.string()),
+    publishedJobId: v.optional(v.id("jobs")),
+    submitterIp: v.optional(v.string()),
+  })
+    .index("by_status", ["status"])
+    .index("by_submittedAt", ["submittedAt"]),
 });

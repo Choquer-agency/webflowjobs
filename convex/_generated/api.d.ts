@@ -12,6 +12,7 @@ import type * as agencyOutreach from "../agencyOutreach.js";
 import type * as applicants from "../applicants.js";
 import type * as crons from "../crons.js";
 import type * as designers from "../designers.js";
+import type * as jobSubmissions from "../jobSubmissions.js";
 import type * as jobs from "../jobs.js";
 import type * as outreach from "../outreach.js";
 import type * as reporting from "../reporting.js";
@@ -28,6 +29,7 @@ declare const fullApi: ApiFromModules<{
   applicants: typeof applicants;
   crons: typeof crons;
   designers: typeof designers;
+  jobSubmissions: typeof jobSubmissions;
   jobs: typeof jobs;
   outreach: typeof outreach;
   reporting: typeof reporting;
