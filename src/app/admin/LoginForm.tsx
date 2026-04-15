@@ -2,14 +2,16 @@ import { login } from "./actions";
 
 export function LoginForm({ error }: { error?: boolean }) {
   return (
+    <div style={{ paddingTop: 140, paddingBottom: 80, minHeight: "70vh" }}>
     <div
       style={{
         maxWidth: 400,
-        margin: "80px auto",
+        margin: "0 auto",
         padding: 32,
         border: "1px solid #222",
         borderRadius: 8,
         fontFamily: "Roboto Mono, monospace",
+        background: "#fff",
       }}
     >
       <h1 style={{ marginTop: 0, fontSize: 22 }}>Admin Dashboard</h1>
@@ -57,6 +59,7 @@ export function LoginForm({ error }: { error?: boolean }) {
           Sign in
         </button>
       </form>
+    </div>
     </div>
   );
 }

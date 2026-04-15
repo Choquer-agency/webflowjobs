@@ -135,8 +135,8 @@ export function LeadsDashboard({ applicants }: { applicants: Applicant[] }) {
     <div
       style={{
         maxWidth: 1200,
-        margin: "32px auto",
-        padding: "0 24px",
+        margin: "0 auto",
+        padding: "140px 24px 60px",
         fontFamily: "Roboto Mono, monospace",
         color: "#111",
       }}
