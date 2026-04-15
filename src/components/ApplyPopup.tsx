@@ -44,15 +44,30 @@ export default function ApplyPopup({ jobTitle, companyName, jobSlug, applyUrl, c
     e.preventDefault();
     e.stopPropagation();
 
-    // If already submitted before, go straight to the application
+    // If already submitted before, record this application for the new job
+    // and go straight to the apply URL. The captureApplicant mutation
+    // deduplicates on (email, jobSlug) so re-clicking the same job is safe.
     const stored = getStoredApplicant();
     if (stored) {
+      fetch('/api/applicants', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: stored.firstName,
+          lastName: stored.lastName,
+          email: stored.email,
+          jobSlug,
+          jobTitle,
+          companyName,
+        }),
+        keepalive: true,
+      }).catch(() => {});
       window.open(applyUrl, '_blank');
       return;
     }
 
     setIsOpen(true);
-  }, [applyUrl]);
+  }, [applyUrl, jobSlug, jobTitle, companyName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
