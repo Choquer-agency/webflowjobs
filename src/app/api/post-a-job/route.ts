@@ -2,6 +2,13 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "@convex/_generated/api";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import Stripe from "stripe";
+
+const SPOTLIGHT_PLANS = {
+  "4-week": { name: "4-Week Job Spotlight", amountCents: 17500 },
+  "1-week": { name: "1-Week Job Spotlight", amountCents: 7500 },
+} as const;
+type SpotlightPlan = keyof typeof SPOTLIGHT_PLANS;
 
 function getConvexClient() {
   const url = process.env.NEXT_PUBLIC_CONVEX_URL;
@@ -66,7 +73,7 @@ export async function POST(request: Request) {
       undefined;
 
     const convex = getConvexClient();
-    await convex.mutation(api.jobSubmissions.createSubmission, {
+    const submissionId = await convex.mutation(api.jobSubmissions.createSubmission, {
       title,
       jobDescription,
       jobType,
@@ -88,6 +95,54 @@ export async function POST(request: Request) {
       wants1WeekSpotlight: Boolean(body.wants1WeekSpotlight),
       submitterIp,
     });
+
+    // If they chose a paid spotlight, kick them into Stripe Checkout.
+    // 4-week wins if somehow both are checked.
+    let spotlight: SpotlightPlan | null = null;
+    if (Boolean(body.wants4WeekSpotlight)) spotlight = "4-week";
+    else if (Boolean(body.wants1WeekSpotlight)) spotlight = "1-week";
+
+    let checkoutUrl: string | undefined;
+    if (spotlight) {
+      const stripeKey = process.env.STRIPE_SECRET_KEY;
+      if (stripeKey) {
+        try {
+          const stripe = new Stripe(stripeKey);
+          const siteUrl =
+            process.env.NEXT_PUBLIC_SITE_URL || "https://www.webflow.jobs";
+          const plan = SPOTLIGHT_PLANS[spotlight];
+          const session = await stripe.checkout.sessions.create({
+            mode: "payment",
+            line_items: [
+              {
+                price_data: {
+                  currency: "usd",
+                  product_data: {
+                    name: plan.name,
+                    description: `Spotlight for ${companyName} — ${title}`,
+                  },
+                  unit_amount: plan.amountCents,
+                },
+                quantity: 1,
+              },
+            ],
+            customer_email: postingEmail,
+            metadata: {
+              submissionId: String(submissionId),
+              plan: spotlight,
+              companyName,
+            },
+            success_url: `${siteUrl}/sponsor/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${siteUrl}/post-a-job?submitted=1`,
+          });
+          checkoutUrl = session.url || undefined;
+        } catch (err) {
+          console.error("Failed to create Stripe session:", err);
+        }
+      } else {
+        console.warn("Spotlight selected but STRIPE_SECRET_KEY is not set");
+      }
+    }
 
     const resendKey = process.env.CHOQUER_RESEND_API_KEY;
     if (resendKey) {
@@ -118,7 +173,7 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, checkoutUrl });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Something went wrong.";
     return NextResponse.json({ error: message }, { status: 400 });

@@ -14,6 +14,8 @@ const PLAN_AMOUNTS: Record<string, number> = {
   "1-week": 7500,
 };
 
+import type { Id } from "@convex/_generated/dataModel";
+
 export async function POST(request: Request) {
   const stripeKey = process.env.STRIPE_SECRET_KEY;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -51,9 +53,9 @@ export async function POST(request: Request) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const { jobId, plan, companyName } = session.metadata || {};
+    const { jobId, submissionId, plan, companyName } = session.metadata || {};
 
-    if (!jobId || !plan || !companyName) {
+    if (!plan || !companyName || (!jobId && !submissionId)) {
       console.error("Missing metadata in checkout session:", session.id);
       return NextResponse.json({ received: true });
     }
@@ -61,7 +63,7 @@ export async function POST(request: Request) {
     try {
       const convex = getConvexClient();
 
-      // Check if we already processed this session (idempotency)
+      // Idempotency — already processed this session
       const existing = await convex.query(
         api.sponsorship.getPaymentBySessionId,
         { stripeSessionId: session.id }
@@ -72,9 +74,23 @@ export async function POST(request: Request) {
         return NextResponse.json({ received: true });
       }
 
-      // Activate the sponsorship
+      // If this came from the Post A Job form, approve the submission first
+      // (which publishes it to the jobs table) and then activate sponsorship.
+      let targetJobId = jobId as Id<"jobs"> | undefined;
+      if (submissionId) {
+        targetJobId = await convex.mutation(
+          api.jobSubmissions.approveSubmission,
+          { id: submissionId as Id<"jobSubmissions"> }
+        );
+      }
+
+      if (!targetJobId) {
+        console.error("No target jobId resolved for session:", session.id);
+        return NextResponse.json({ received: true });
+      }
+
       await convex.mutation(api.sponsorship.activateSponsorship, {
-        jobId: jobId as any,
+        jobId: targetJobId,
         stripeSessionId: session.id,
         stripePaymentIntentId:
           typeof session.payment_intent === "string"

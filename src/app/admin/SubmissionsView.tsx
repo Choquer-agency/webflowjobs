@@ -334,7 +334,7 @@ export function SubmissionsView({
                     <Detail label="Promotions requested">
                       {[
                         s.wantsEmailBlast && "Email blast (free)",
-                        s.wants4WeekSpotlight && "4-week spotlight ($125)",
+                        s.wants4WeekSpotlight && "4-week spotlight ($175)",
                         s.wants1WeekSpotlight && "1-week spotlight ($75)",
                       ]
                         .filter(Boolean)

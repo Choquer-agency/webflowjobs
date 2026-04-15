@@ -82,6 +82,14 @@ export function PostAJobForm() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Submission failed");
+
+      // Paid spotlight selected → redirect to Stripe Checkout.
+      // Job stays pending until payment completes (webhook auto-approves).
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+        return;
+      }
+
       setStatus("success");
       formRef.current.reset();
       if (quillRef.current) quillRef.current.setContents([]);
@@ -379,7 +387,7 @@ export function PostAJobForm() {
             className="w-checkbox-input form_input is-apply checkbox"
           />
           <span className="w-form-label">
-            Spotlight my job post for 4 weeks ($125)
+            Spotlight my job post for 4 weeks ($175)
           </span>
         </label>
 
