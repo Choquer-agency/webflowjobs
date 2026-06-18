@@ -1,0 +1,47 @@
+{
+  "weekNumber": 1,
+  "dateRange": "June 11–18, 2026",
+  "siteVisits": null,
+  "siteVisitsNote": "Not instrumented yet — SE Ranking organic est. ~94 visits/mo WW (~33 US). Recommend adding Vercel Web Analytics so this is real next week.",
+  "seo": {
+    "summary": "Week 1 is the foundation phase of the Q3 plan: get the technical + schema + AI-crawler groundwork in place so every later content and programmatic push compounds. No new blog pages this week by design — comparison content starts Week 3.",
+    "items": [
+      {
+        "what": "Verified JobPosting schema is live on every /jobs/[slug] and added BreadcrumbList to job pages",
+        "why": "You already rank #1 in Google's AI/SGE block for \"[city] webflow developer\" — JobPosting keeps you eligible for the Google Jobs rich result, and breadcrumbs add a second rich-result type + clearer crawl structure."
+      },
+      {
+        "what": "Added FAQPage schema to resource articles that contain an FAQ section (auto-parsed from the content)",
+        "why": "FAQ rich results expand your SERP footprint, and LLMs preferentially extract clean Q&A pairs — this directly feeds AI citations for salary/hiring questions."
+      },
+      {
+        "what": "Added BreadcrumbList schema across resource articles",
+        "why": "Breadcrumb rich results + a clearer hierarchy for crawlers and answer engines."
+      },
+      {
+        "what": "Published /llms.txt with your citable salary + hiring data and key pages",
+        "why": "Gives ChatGPT, Claude, Perplexity and Gemini an explicit, structured map to find and cite Webflow Jobs salary data — the core of the GEO strategy."
+      },
+      {
+        "what": "Updated robots to explicitly welcome AI crawlers (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended, CCBot, etc.) and blocked /admin + /api",
+        "why": "Ensures eligibility for AI-engine citations (your AI presence is currently just 1–2) while keeping private routes out of the index."
+      },
+      {
+        "what": "Expanded SE Ranking rank tracking from 10 → 60 keywords",
+        "why": "We can now measure the page-2→page-1 pushes (webflow developers #22, webflow developer #27) and the quick-win targets (webflow vs framer, webflow alternative, webflow agency) week over week."
+      },
+      {
+        "what": "Built an automated weekly metrics query + this report pipeline",
+        "why": "So every Monday you get the same numbers and SEO progress without asking."
+      }
+    ],
+    "links": [
+      { "url": "https://www.webflow.jobs/llms.txt", "label": "/llms.txt (new)", "kind": "new file" },
+      { "url": "https://www.webflow.jobs/robots.txt", "label": "/robots.txt (AI crawlers allowed)", "kind": "changed" },
+      { "url": "https://www.webflow.jobs/jobs", "label": "Job pages — JobPosting + Breadcrumb schema", "kind": "changed" },
+      { "url": "https://www.webflow.jobs/resources/webflow-developer-salary-guide-2026", "label": "Resource articles — FAQ + Breadcrumb schema", "kind": "changed" }
+    ]
+  },
+  "prevWeekResults": null,
+  "prevWeekResultsNote": "Week 1 is the baseline — there's no prior week to compare yet. From next Monday this section reports how each change performed: rich-result impressions for JobPosting / FAQ / Breadcrumb, click-through-rate movement on the boosted keywords, and any AI/LLM referral traffic now that llms.txt + AI-crawler access are live."
+}

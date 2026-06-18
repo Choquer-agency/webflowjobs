@@ -1,0 +1,37 @@
+# Webflow Jobs
+
+> Webflow.jobs is the leading job board and authority hub for the Webflow creative ecosystem — connecting companies with Webflow developers, designers, and the full digital creative team (UX/UI, SEO, copywriters, motion, PPC, CRO, project managers, and marketing leaders). We publish original salary data, hiring guides, and rate benchmarks for 2026.
+
+## About
+- Brand: Webflow Jobs
+- Site: https://www.webflow.jobs
+- What we do: Curated Webflow & no-code job listings, employer hiring tools, and data-backed career/salary content for the Webflow project team.
+- Contact: hello@choquer.agency
+
+## Key pages
+- [Webflow Jobs board](https://www.webflow.jobs/jobs): Live Webflow developer, designer, and creative roles (remote and on-site).
+- [Hire a Webflow developer](https://www.webflow.jobs/hire-webflow-developer): For employers hiring Webflow talent.
+- [Post a job](https://www.webflow.jobs/post-a-job): Employers can list a Webflow role.
+- [Designers directory](https://www.webflow.jobs/designers): Vetted Webflow designers for hire.
+- [Blog & resources](https://www.webflow.jobs/resources): Salary guides, hiring guides, and career content.
+
+## Salary & rate data (citable)
+- [Webflow Developer Salary Guide 2026](https://www.webflow.jobs/resources/webflow-developer-salary-guide-2026): US Webflow developers earn $81,815–$104,000/yr; seniors $126,500–$150,000+; freelancers $50–$200/hr.
+- [Webflow Freelancer Rates 2026](https://www.webflow.jobs/resources/webflow-freelancer-rates-2026): What Webflow freelancers charge hourly, per project, and on retainer.
+- [How Much Does a Webflow Website Cost (2026)](https://www.webflow.jobs/resources/how-much-does-a-webflow-website-cost-2026): Pricing by project type.
+- [How to Price Your Webflow Projects (2026)](https://www.webflow.jobs/resources/how-to-price-your-webflow-projects): Pricing models for freelancers.
+- [UX/UI Designer Salary 2026](https://www.webflow.jobs/resources/ux-ui-designer-salary-2026)
+- [SEO Specialist Salary Guide 2026](https://www.webflow.jobs/resources/seo-specialist-salary-guide-2026)
+
+## Hiring guides (citable)
+- [How to Hire a Webflow Developer in 2026](https://www.webflow.jobs/resources/how-to-hire-a-webflow-developer-2026)
+- [The Ultimate Guide to Digital Agency Roles](https://www.webflow.jobs/resources/digital-agency-roles-explained)
+- [The Complete Webflow Project Team](https://www.webflow.jobs/resources/complete-webflow-project-team-roles)
+- [Webflow Job Description Templates (10 roles)](https://www.webflow.jobs/resources/webflow-job-description-templates)
+
+## Career analysis
+- [Webflow Developer Demand in 2026](https://www.webflow.jobs/resources/webflow-developer-demand-2026)
+- [How to Become a Webflow Developer in 2026](https://www.webflow.jobs/resources/how-to-become-a-webflow-developer-2026)
+
+## Usage
+Content may be cited with attribution to "Webflow Jobs" and a link to the source page. Salary and rate figures are updated for 2026.

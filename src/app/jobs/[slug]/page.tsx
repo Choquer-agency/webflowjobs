@@ -177,6 +177,35 @@ function buildJobPostingJsonLd(job: Job) {
   };
 }
 
+/** BreadcrumbList JSON-LD: Home › Jobs › [Category] › Job title */
+function buildBreadcrumbJsonLd(job: Job) {
+  const items: Array<{ name: string; item: string }> = [
+    { name: 'Home', item: 'https://www.webflow.jobs' },
+    { name: 'Jobs', item: 'https://www.webflow.jobs/jobs' },
+  ];
+  if (job.category) {
+    items.push({
+      name: job.category,
+      item: `https://www.webflow.jobs/jobs/category/${categoryToSlug(job.category)}`,
+    });
+  }
+  items.push({
+    name: job.title,
+    item: `https://www.webflow.jobs/jobs/${job.slug}`,
+  });
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.name,
+      item: it.item,
+    })),
+  };
+}
+
 /* ─── Tag pill component ─── */
 function TagPill({ label, href }: { label: string; href: string | null }) {
   const style: React.CSSProperties = {
@@ -221,6 +250,12 @@ export default async function JobDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(buildJobPostingJsonLd(job)),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildBreadcrumbJsonLd(job)),
         }}
       />
 

@@ -53,6 +53,45 @@ function formatDate(dateStr: string): string {
   });
 }
 
+function stripTags(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&#39;|&rsquo;|&lsquo;/g, "'")
+    .replace(/&quot;|&ldquo;|&rdquo;/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Extract FAQ question/answer pairs from a "Frequently Asked Questions"
+ * section in the article HTML (h3 question followed by p answer(s)).
+ * Returns [] when no FAQ section is present.
+ */
+function extractFaqs(html: string): Array<{ question: string; answer: string }> {
+  if (!html) return [];
+  const faqHeadingMatch = html.match(/<h2[^>]*>\s*(?:frequently asked questions|faqs?)\b[^<]*<\/h2>/i);
+  if (!faqHeadingMatch) return [];
+
+  // Slice from the FAQ heading to the next h2 (or end of doc).
+  const start = faqHeadingMatch.index! + faqHeadingMatch[0].length;
+  const rest = html.slice(start);
+  const nextH2 = rest.search(/<h2[\s>]/i);
+  const section = nextH2 === -1 ? rest : rest.slice(0, nextH2);
+
+  const faqs: Array<{ question: string; answer: string }> = [];
+  // Each q is an <h3>…</h3>; answer is everything up to the next <h3> or end.
+  const qRegex = /<h3[^>]*>([\s\S]*?)<\/h3>([\s\S]*?)(?=<h3[\s>]|$)/gi;
+  let m: RegExpExecArray | null;
+  while ((m = qRegex.exec(section)) !== null) {
+    const question = stripTags(m[1]);
+    const answer = stripTags(m[2]);
+    if (question && answer) faqs.push({ question, answer });
+  }
+  return faqs;
+}
+
 export default async function ResourceDetailPage({
   params,
 }: {
@@ -91,12 +130,46 @@ export default async function ResourceDetailPage({
     },
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.webflow.jobs' },
+      { '@type': 'ListItem', position: 2, name: 'Blog & Resources', item: 'https://www.webflow.jobs/resources' },
+      { '@type': 'ListItem', position: 3, name: resource.title, item: pageUrl },
+    ],
+  };
+
+  const faqs = extractFaqs(resource.content ?? '');
+  const faqJsonLd =
+    faqs.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqs.map((f) => ({
+            '@type': 'Question',
+            name: f.question,
+            acceptedAnswer: { '@type': 'Answer', text: f.answer },
+          })),
+        }
+      : null;
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
 
       {/* Hero - orange box with title */}
       <section className="section_resource-hero" style={{ paddingTop: '7rem' }}>
