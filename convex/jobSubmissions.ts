@@ -13,6 +13,9 @@ function slugify(s: string): string {
 
 export const createSubmission = mutation({
   args: {
+    submitterName: v.optional(v.string()),
+    submitterPosition: v.optional(v.string()),
+    submitterEmail: v.optional(v.string()),
     title: v.string(),
     jobDescription: v.string(),
     jobType: v.string(),

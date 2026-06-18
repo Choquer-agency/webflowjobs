@@ -172,6 +172,10 @@ export default defineSchema({
   }).index("by_designerId", ["designerId"]),
 
   jobSubmissions: defineTable({
+    // About you (the person submitting the post)
+    submitterName: v.optional(v.string()),
+    submitterPosition: v.optional(v.string()),
+    submitterEmail: v.optional(v.string()),
     title: v.string(),
     jobDescription: v.string(),
     jobType: v.string(),

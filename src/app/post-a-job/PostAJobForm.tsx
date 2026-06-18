@@ -50,6 +50,9 @@ export function PostAJobForm() {
     }
 
     const payload = {
+      submitterName: fd.get("Your-Name"),
+      submitterPosition: fd.get("Your-Position"),
+      submitterEmail: fd.get("Your-Email"),
       title: fd.get("Job-Title"),
       jobDescription,
       jobType: fd.get("Job-Type"),
@@ -130,10 +133,70 @@ export function PostAJobForm() {
         data-name="Post a Job Form"
         className="card is-lighter_orange"
       >
+        <p className="heading-style-h4">About You</p>
+
+        <div className="h-wrap wrap_portrait">
+          <div className="form_field-wrapper">
+            <label htmlFor="Your-Name">Your Name *</label>
+            <input
+              className="form_input is-apply w-input"
+              maxLength={256}
+              name="Your-Name"
+              type="text"
+              id="Your-Name"
+              required
+            />
+          </div>
+          <div className="form_field-wrapper">
+            <label htmlFor="Your-Position">Your Position *</label>
+            <input
+              className="form_input is-apply w-input"
+              maxLength={256}
+              name="Your-Position"
+              type="text"
+              id="Your-Position"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="h-wrap wrap_portrait">
+          <div className="form_field-wrapper">
+            <label htmlFor="Company-Name">Company Name *</label>
+            <input
+              className="form_input is-apply w-input"
+              maxLength={256}
+              name="Company-Name"
+              type="text"
+              id="Company-Name"
+              required
+            />
+          </div>
+          <div className="form_field-wrapper">
+            <label htmlFor="Your-Email">Your Email *</label>
+            <input
+              className="form_input is-apply w-input"
+              maxLength={256}
+              name="Your-Email"
+              type="email"
+              id="Your-Email"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="spacer-component" style={{ paddingTop: "2rem" }}></div>
+
         <p className="heading-style-h4">Job Description</p>
 
         <div className="form_field-wrapper">
           <label htmlFor="Job-Title">Job Title *</label>
+          <Tip>
+            Include <strong>&ldquo;Webflow&rdquo;</strong> + the role, and the
+            type if flexible — e.g. <em>&ldquo;Freelance Webflow
+            Developer.&rdquo;</em> Keep it to 3–6 words. These get the most
+            applicants.
+          </Tip>
           <input
             className="form_input is-apply w-input"
             maxLength={256}
@@ -146,6 +209,11 @@ export function PostAJobForm() {
 
         <div className="form_field-wrapper">
           <label htmlFor="editor">Job Description *</label>
+          <Tip>
+            Keep it short and scannable (~1,500–2,500 chars). Lead with a
+            one-line hook → what they&apos;ll build → 5–7 must-have skills → how
+            to apply. Skip the boilerplate — concise posts convert ~2× better.
+          </Tip>
           <div
             id="editor"
             className="form_input is-apply"
@@ -315,20 +383,6 @@ export function PostAJobForm() {
 
         <p className="heading-style-h4">Company Details</p>
 
-        <div className="h-wrap wrap_portrait">
-          <div className="form_field-wrapper">
-            <label htmlFor="Company-Name">Company Name *</label>
-            <input
-              className="form_input is-apply w-input"
-              maxLength={256}
-              name="Company-Name"
-              type="text"
-              id="Company-Name"
-              required
-            />
-          </div>
-        </div>
-
         <div className="form_field-wrapper">
           <label htmlFor="Logo-URL">Company Logo (URL)</label>
           <input
@@ -430,5 +484,30 @@ export function PostAJobForm() {
         )}
       </form>
     </>
+  );
+}
+
+function Tip({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        gap: 8,
+        alignItems: "flex-start",
+        margin: "6px 0 10px",
+        padding: "10px 12px",
+        background: "rgba(255, 90, 31, 0.07)",
+        border: "1px solid rgba(255, 90, 31, 0.2)",
+        borderRadius: 8,
+        fontSize: 13,
+        lineHeight: 1.5,
+        color: "#5a3a2a",
+      }}
+    >
+      <span aria-hidden style={{ flexShrink: 0 }}>💡</span>
+      <span>
+        <strong style={{ color: "#c44510" }}>Tip:</strong> {children}
+      </span>
+    </div>
   );
 }

@@ -9,6 +9,9 @@ import {
 
 export type Submission = {
   _id: string;
+  submitterName?: string;
+  submitterPosition?: string;
+  submitterEmail?: string;
   title: string;
   jobDescription: string;
   jobType: string;
@@ -288,6 +291,25 @@ export function SubmissionsView({
                     lineHeight: 1.6,
                   }}
                 >
+                  {(s.submitterName || s.submitterEmail) && (
+                    <Detail label="Submitted by">
+                      {s.submitterName}
+                      {s.submitterPosition ? ` · ${s.submitterPosition}` : ""}
+                      {s.submitterEmail ? (
+                        <>
+                          {" · "}
+                          <a
+                            href={`mailto:${s.submitterEmail}`}
+                            style={{ color: "#ff5a1f" }}
+                          >
+                            {s.submitterEmail}
+                          </a>
+                        </>
+                      ) : (
+                        ""
+                      )}
+                    </Detail>
+                  )}
                   <Detail label="Job Description">
                     <div
                       style={{

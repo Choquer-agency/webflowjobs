@@ -33,6 +33,9 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
+    const submitterName = str(body.submitterName, 256);
+    const submitterPosition = str(body.submitterPosition, 256);
+    const submitterEmail = str(body.submitterEmail, 256).toLowerCase();
     const title = str(body.title, 256);
     const jobDescription = str(body.jobDescription, 20000);
     const jobType = str(body.jobType, 64);
@@ -47,6 +50,9 @@ export async function POST(request: Request) {
     const comments = str(body.comments, 5000) || undefined;
 
     if (
+      !submitterName ||
+      !submitterPosition ||
+      !submitterEmail ||
       !title ||
       !jobDescription ||
       !jobType ||
@@ -63,7 +69,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!EMAIL_RE.test(postingEmail)) {
+    if (!EMAIL_RE.test(postingEmail) || !EMAIL_RE.test(submitterEmail)) {
       return NextResponse.json({ error: "Invalid email." }, { status: 400 });
     }
 
@@ -74,6 +80,9 @@ export async function POST(request: Request) {
 
     const convex = getConvexClient();
     const submissionId = await convex.mutation(api.jobSubmissions.createSubmission, {
+      submitterName,
+      submitterPosition,
+      submitterEmail,
       title,
       jobDescription,
       jobType,
@@ -158,6 +167,7 @@ export async function POST(request: Request) {
             <h2>New job submission</h2>
             <p><strong>${companyName}</strong> posted <strong>${title}</strong></p>
             <ul>
+              <li>Submitted by: ${submitterName} (${submitterPosition}) — <a href="mailto:${submitterEmail}">${submitterEmail}</a></li>
               <li>Category: ${category}</li>
               <li>Job Type: ${jobType}</li>
               <li>Location: ${location}</li>
