@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import "@/styles/globals.css";
 import { Navbar, Footer } from "@/components/layout";
 
@@ -90,6 +91,7 @@ export default function RootLayout({
           gtag('js', new Date());
           gtag('config', 'G-V4REHJ7432');`}
         </Script>
+        <Analytics />
       </body>
     </html>
   );
