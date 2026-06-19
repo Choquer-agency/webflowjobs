@@ -1,6 +1,7 @@
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@convex/_generated/api";
 import { NextResponse } from "next/server";
+import { Resend } from "resend";
 
 function getConvexClient() {
   const url = process.env.NEXT_PUBLIC_CONVEX_URL;
@@ -83,6 +84,43 @@ export async function POST(request: Request) {
           role: p.role || undefined,
           sortOrder: i,
         });
+      }
+    }
+
+    // Notify admin of the new submission (mirrors the job-submission flow)
+    const resendKey = process.env.CHOQUER_RESEND_API_KEY;
+    if (resendKey) {
+      try {
+        const resend = new Resend(resendKey);
+        const from = process.env.CHOQUER_FROM_EMAIL || "bryce@choquer.agency";
+        const to = process.env.REPORT_TO_EMAIL || "bryce@choquer.agency";
+        const rate =
+          hourlyRateMin || hourlyRateMax
+            ? `${currency} ${hourlyRateMin ?? "?"}-${hourlyRateMax ?? "?"}/hr`
+            : projectRateMin || projectRateMax
+              ? `${currency} ${projectRateMin ?? "?"}-${projectRateMax ?? "?"}/project`
+              : "—";
+        await resend.emails.send({
+          from: `Webflow Jobs <${from}>`,
+          to: [to],
+          replyTo: typeof email === "string" ? email : undefined,
+          subject: `New designer submission: ${firstName} ${lastName}`,
+          html: `
+            <h2>New designer profile submitted</h2>
+            <p><strong>${firstName} ${lastName}</strong> wants to be featured.</p>
+            <ul>
+              <li>Email: ${email}</li>
+              <li>Country: ${country} · ${yearsExperience} experience</li>
+              <li>Specialties: ${(specialties || []).join(", ")}</li>
+              <li>Rate: ${rate}</li>
+              <li>Portfolio: <a href="${portfolioUrl}">${portfolioUrl}</a></li>
+              <li>Projects submitted: ${projects?.length || 0}</li>
+            </ul>
+            <p><a href="https://www.webflow.jobs/admin">Review in admin dashboard →</a></p>
+          `,
+        });
+      } catch (mailErr) {
+        console.error("Failed to send designer notification email:", mailErr);
       }
     }
 

@@ -13,15 +13,52 @@ export const dynamic = "force-dynamic";
 
 async function fetchData() {
   const url = process.env.NEXT_PUBLIC_CONVEX_URL;
-  if (!url) return { applicants: [], submissions: [] };
+  if (!url) return { applicants: [], submissions: [], jobs: [], designers: [] };
   const convex = new ConvexHttpClient(url);
 
-  const [applicants, submissions] = await Promise.all([
+  const [applicants, submissions, jobs, designers] = await Promise.all([
     convex.query(api.applicants.listApplicants, {}),
     convex.query(api.jobSubmissions.listSubmissions, {}),
+    convex.query(api.jobs.listAllJobs, {}),
+    convex.query(api.designers.listAllDesigners, {}),
   ]);
 
   return {
+    jobs: jobs.map((j: any) => ({
+      slug: j.slug,
+      title: j.title,
+      companyName: j.companyName,
+      category: j.category,
+      jobType: j.jobType,
+      source: j.source,
+      isSponsored: j.isSponsored,
+      publishedAt: j.publishedAt,
+      descLength: (j.jobDescription || "").length,
+    })),
+    designers: designers.map((d: any) => ({
+      _id: String(d._id),
+      firstName: d.firstName,
+      lastName: d.lastName,
+      email: d.email,
+      slug: d.slug,
+      bio: d.bio,
+      profilePhotoUrl: d.profilePhotoUrl,
+      portfolioUrl: d.portfolioUrl,
+      country: d.country,
+      yearsExperience: d.yearsExperience,
+      specialties: d.specialties || [],
+      hourlyRateMin: d.hourlyRateMin,
+      hourlyRateMax: d.hourlyRateMax,
+      projectRateMin: d.projectRateMin,
+      projectRateMax: d.projectRateMax,
+      currency: d.currency,
+      linkedinUrl: d.linkedinUrl,
+      twitterUrl: d.twitterUrl,
+      dribbbleUrl: d.dribbbleUrl,
+      githubUrl: d.githubUrl,
+      status: d.status,
+      submittedAt: d.submittedAt,
+    })),
     applicants: applicants.map((r: any) => ({
       _id: String(r._id),
       firstName: r.firstName,
@@ -73,6 +110,13 @@ export default async function AdminPage({
     return <LoginForm error={params.error === "1"} />;
   }
 
-  const { applicants, submissions } = await fetchData();
-  return <AdminDashboard applicants={applicants} submissions={submissions} />;
+  const { applicants, submissions, jobs, designers } = await fetchData();
+  return (
+    <AdminDashboard
+      applicants={applicants}
+      submissions={submissions}
+      jobs={jobs}
+      designers={designers}
+    />
+  );
 }

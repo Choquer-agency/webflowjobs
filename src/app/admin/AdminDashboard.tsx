@@ -4,18 +4,25 @@ import { useState } from "react";
 import { logout } from "./actions";
 import { LeadsView, type Applicant } from "./LeadsView";
 import { SubmissionsView, type Submission } from "./SubmissionsView";
+import { DesignersView, type DesignerRow } from "./DesignersView";
+import { MetricsView, type JobRow } from "./MetricsView";
+
+type Tab = "dashboard" | "leads" | "submissions" | "designers";
 
 export function AdminDashboard({
   applicants,
   submissions,
+  jobs,
+  designers,
 }: {
   applicants: Applicant[];
   submissions: Submission[];
+  jobs: JobRow[];
+  designers: DesignerRow[];
 }) {
-  const pendingCount = submissions.filter((s) => s.status === "pending").length;
-  const [tab, setTab] = useState<"leads" | "submissions">(
-    pendingCount > 0 ? "submissions" : "leads",
-  );
+  const pendingJobs = submissions.filter((s) => s.status === "pending").length;
+  const pendingDesigners = designers.filter((d) => d.status === "pending").length;
+  const [tab, setTab] = useState<Tab>("dashboard");
 
   return (
     <div
@@ -66,6 +73,11 @@ export function AdminDashboard({
         }}
       >
         <TabButton
+          active={tab === "dashboard"}
+          onClick={() => setTab("dashboard")}
+          label="Dashboard"
+        />
+        <TabButton
           active={tab === "leads"}
           onClick={() => setTab("leads")}
           label="Leads"
@@ -76,15 +88,28 @@ export function AdminDashboard({
           onClick={() => setTab("submissions")}
           label="Job Submissions"
           count={submissions.length}
-          badge={pendingCount > 0 ? pendingCount : undefined}
+          badge={pendingJobs > 0 ? pendingJobs : undefined}
+        />
+        <TabButton
+          active={tab === "designers"}
+          onClick={() => setTab("designers")}
+          label="Designers"
+          count={designers.length}
+          badge={pendingDesigners > 0 ? pendingDesigners : undefined}
         />
       </div>
 
-      {tab === "leads" ? (
-        <LeadsView applicants={applicants} />
-      ) : (
-        <SubmissionsView submissions={submissions} />
+      {tab === "dashboard" && (
+        <MetricsView
+          jobs={jobs}
+          applicants={applicants}
+          designers={designers}
+          submissions={submissions}
+        />
       )}
+      {tab === "leads" && <LeadsView applicants={applicants} />}
+      {tab === "submissions" && <SubmissionsView submissions={submissions} />}
+      {tab === "designers" && <DesignersView designers={designers} />}
     </div>
   );
 }
@@ -99,7 +124,7 @@ function TabButton({
   active: boolean;
   onClick: () => void;
   label: string;
-  count: number;
+  count?: number;
   badge?: number;
 }) {
   return (
@@ -122,7 +147,7 @@ function TabButton({
       }}
     >
       {label}
-      <span style={{ color: "#999", fontSize: 12 }}>({count})</span>
+      {count !== undefined && <span style={{ color: "#999", fontSize: 12 }}>({count})</span>}
       {badge !== undefined && (
         <span
           style={{

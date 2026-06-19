@@ -6,6 +6,8 @@ import { revalidatePath } from "next/cache";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
+import { Resend } from "resend";
+import { designerLiveEmailHtml } from "@/lib/designerEmail";
 
 const ADMIN_COOKIE = "admin_auth";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Choquer91!";
@@ -79,4 +81,58 @@ export async function deleteSubmission(id: string) {
     id: id as Id<"jobSubmissions">,
   });
   revalidatePath("/admin");
+}
+
+// ---------------------------------------------------------------------------
+// Designer review
+// ---------------------------------------------------------------------------
+
+export async function approveDesigner(id: string) {
+  const jar = await cookies();
+  requireAuth(jar);
+  const convex = getConvex();
+  const designerId = id as Id<"designers">;
+
+  await convex.mutation(api.designers.updateDesignerStatus, {
+    id: designerId,
+    status: "approved",
+  });
+
+  // Send the "you're live" email automatically.
+  try {
+    const all = await convex.query(api.designers.listAllDesigners, {});
+    const d = all.find((x: any) => String(x._id) === id);
+    const resendKey = process.env.CHOQUER_RESEND_API_KEY;
+    if (d && resendKey) {
+      const resend = new Resend(resendKey);
+      const from = process.env.CHOQUER_FROM_EMAIL || "bryce@choquer.agency";
+      await resend.emails.send({
+        from: `Webflow Jobs <${from}>`,
+        to: [d.email],
+        replyTo: "bryce@choquer.agency",
+        subject: "You're live on Webflow.jobs 🎉",
+        html: designerLiveEmailHtml(
+          d.firstName,
+          `https://www.webflow.jobs/designers/${d.slug}`,
+        ),
+      });
+    }
+  } catch (err) {
+    console.error("Failed to send designer live email:", err);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/designers");
+}
+
+export async function rejectDesigner(id: string) {
+  const jar = await cookies();
+  requireAuth(jar);
+  const convex = getConvex();
+  await convex.mutation(api.designers.updateDesignerStatus, {
+    id: id as Id<"designers">,
+    status: "rejected",
+  });
+  revalidatePath("/admin");
+  revalidatePath("/designers");
 }
