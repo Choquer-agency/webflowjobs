@@ -6415,3 +6415,46 @@ select:active {
     margin-top: 2rem;
   }
 }
+
+/* Designers directory + profile — responsive grids */
+.designer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.designer-profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.4fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.designer-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+.designer-projects-grid.is-single {
+  grid-template-columns: 1fr;
+}
+
+@media screen and (max-width: 991px) {
+  .designer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .designer-profile-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .designer-profile-grid .is-sticky {
+    position: static;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .designer-grid,
+  .designer-projects-grid {
+    grid-template-columns: 1fr;
+  }
+}

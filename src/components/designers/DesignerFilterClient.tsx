@@ -113,7 +113,7 @@ export default function DesignerFilterClient({ designers }: { designers: Designe
 
       {/* Grid */}
       {filtered.length > 0 ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+        <div className="designer-grid">
           {filtered.map((designer) => (
             <DesignerCard key={designer.id} designer={designer} />
           ))}

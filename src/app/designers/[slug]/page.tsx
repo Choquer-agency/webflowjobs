@@ -194,7 +194,7 @@ export default async function DesignerProfilePage({ params }: PageProps) {
       <section className="section">
         <div className="padding-global">
           <div className="container-large">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 0.4fr', gap: '3rem', alignItems: 'start' }}>
+            <div className="designer-profile-grid">
               {/* Left column */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
                 {/* About */}
@@ -229,7 +229,7 @@ export default async function DesignerProfilePage({ params }: PageProps) {
                 {projects.length > 0 && (
                   <div>
                     <h2 className="heading-style-h4" style={{ marginBottom: '1rem' }}>Showcase Projects</h2>
-                    <div style={{ display: 'grid', gridTemplateColumns: projects.length === 1 ? '1fr' : 'repeat(2, 1fr)', gap: '1.5rem' }}>
+                    <div className={`designer-projects-grid${projects.length === 1 ? ' is-single' : ''}`}>
                       {projects.map((project) => (
                         <div
                           key={project.id}
