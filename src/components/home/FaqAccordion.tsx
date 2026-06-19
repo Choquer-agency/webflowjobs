@@ -94,9 +94,6 @@ function AccordionSection({ title, items, sectionKey }: { title: string; items: 
     <div
       className="grid-2c_layout is-faq"
       style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 2fr',
-        gap: '3rem',
         alignItems: 'start',
       }}
     >

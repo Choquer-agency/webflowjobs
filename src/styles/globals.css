@@ -6458,3 +6458,79 @@ select:active {
     grid-template-columns: 1fr;
   }
 }
+
+/* Working mobile nav menu (Webflow's JS toggle isn't present in the app) */
+.nav_component {
+  z-index: 1000;
+}
+.w-icon-nav-menu-open {
+  font-family: inherit !important;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.w-icon-nav-menu-open:before {
+  content: "\2715"; /* ✕ */
+}
+
+@media screen and (max-width: 991px) {
+  .nav_menu.is-open {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    grid-row-gap: 0;
+    grid-column-gap: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    padding: 0.5rem 1.5rem 1.5rem;
+    box-shadow: 0 16px 28px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid #eee;
+    z-index: 1000;
+  }
+  .nav_menu.is-open .nav_menu_link {
+    color: #212121;
+    font-size: 1.125rem;
+    padding: 0.875rem 0;
+    border-top: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  }
+  .nav_menu.is-open .nav_menu_link:hover {
+    border-bottom: 1px solid var(--color-surface--orange);
+  }
+  .nav_menu.is-open .button.is-nav {
+    margin-top: 0.875rem;
+    text-align: center;
+  }
+}
+
+/* Job detail: main content + fixed sidebar → stack on mobile */
+.job-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 3rem;
+  align-items: start;
+}
+@media screen and (max-width: 991px) {
+  .job-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .job-detail-grid .is-sticky {
+    position: static;
+  }
+}
+
+/* Sponsor pricing: two plans → stack on small screens */
+.sponsor-plans-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+@media screen and (max-width: 640px) {
+  .sponsor-plans-grid {
+    grid-template-columns: 1fr;
+  }
+}

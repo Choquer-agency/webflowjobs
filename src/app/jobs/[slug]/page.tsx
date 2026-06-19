@@ -263,7 +263,7 @@ export default async function JobDetailPage({
         <div className="padding-global">
           <div className="padding-section-medium">
             <div className="container-large">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '3rem', alignItems: 'start' }}>
+              <div className="job-detail-grid">
               {/* Left column */}
               <div>
                 {/* Date badge */}

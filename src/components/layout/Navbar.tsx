@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 
 function LogoDark() {
   return (
@@ -13,22 +14,38 @@ function LogoDark() {
 }
 
 export default function Navbar() {
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
+
   return (
     <div data-animation="default" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" className="nav_component w-nav">
       <div className="padding-global">
         <div className="nav_container">
-          <Link href="/" className="nav_logo-link w-nav-brand">
+          <Link href="/" className="nav_logo-link w-nav-brand" onClick={close}>
             <div className="nav_logo w-embed">
               <LogoDark />
             </div>
           </Link>
-          <nav role="navigation" className="nav_menu w-nav-menu">
-            <Link href="/resources" className="nav_menu_link w-nav-link">Blogs &amp; Resources</Link>
-            <Link href="/designers" className="nav_menu_link w-nav-link">Designers</Link>
-            <Link href="/post-a-job" className="button is-nav w-button">Post A Job</Link>
+          <nav role="navigation" className={`nav_menu w-nav-menu${open ? ' is-open' : ''}`}>
+            <Link href="/resources" className="nav_menu_link w-nav-link" onClick={close}>Blogs &amp; Resources</Link>
+            <Link href="/designers" className="nav_menu_link w-nav-link" onClick={close}>Designers</Link>
+            <Link href="/post-a-job" className="button is-nav w-button" onClick={close}>Post A Job</Link>
           </nav>
-          <div className="nav_button w-nav-button">
-            <div className="w-icon-nav-menu"></div>
+          <div
+            className={`nav_button w-nav-button${open ? ' w--open' : ''}`}
+            role="button"
+            tabIndex={0}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setOpen((v) => !v);
+              }
+            }}
+          >
+            <div className={open ? 'w-icon-nav-menu-open' : 'w-icon-nav-menu'}></div>
           </div>
         </div>
       </div>

@@ -149,7 +149,7 @@ export default function SponsorClient({
       </div>
 
       {/* Pricing cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
+      <div className="sponsor-plans-grid">
         {PLANS.map((plan) => (
           <div
             key={plan.id}

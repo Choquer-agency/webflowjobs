@@ -54,11 +54,6 @@ export default function ActionCards() {
           <div className="container-large" style={{ maxWidth: '80rem', margin: '0 auto' }}>
             <div
               className="grid-3c_layout is-bento"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '1.5rem',
-              }}
             >
               {/* Card 1: Post A Job */}
               <div
