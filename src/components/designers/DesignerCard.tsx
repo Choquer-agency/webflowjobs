@@ -14,6 +14,14 @@ function fmt(n: number): string {
   return n.toLocaleString('en-US');
 }
 
+/** "10" -> "10 years", "1" -> "1 year", "8 years" -> "8 years". */
+function formatYears(raw: string): string {
+  const v = (raw || '').trim();
+  if (!v) return v;
+  if (/year/i.test(v)) return v;
+  return `${v} ${v === '1' ? 'year' : 'years'}`;
+}
+
 function formatRate(min: number | null, max: number | null, currency: string): string | null {
   if (min === null && max === null) return null;
   const sym = CURRENCY_SYMBOLS[currency] || currency;
@@ -84,7 +92,7 @@ export default function DesignerCard({ designer }: { designer: Designer }) {
             {designer.isSponsored && <SponsoredBadge />}
           </div>
           <p style={{ color: '#666', fontSize: '0.875rem', margin: '0.125rem 0 0' }}>
-            {designer.country} &bull; {designer.yearsExperience}
+            {designer.country} &bull; {formatYears(designer.yearsExperience)}
           </p>
         </div>
       </div>

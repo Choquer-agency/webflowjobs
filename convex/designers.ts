@@ -121,6 +121,45 @@ export const submitDesignerApplication = mutation({
   },
 });
 
+/** Admin: list every designer regardless of status (for review / go-live). */
+export const listAllDesigners = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("designers").order("desc").take(1000);
+  },
+});
+
+/**
+ * Admin: overwrite all four pricing fields at once. Passing a field as
+ * undefined deletes it, so e.g. { projectRateMin: 1500 } clears hourly rates
+ * and leaves a "project-only, $1,500+" profile.
+ */
+export const setDesignerPricing = mutation({
+  args: {
+    id: v.id("designers"),
+    hourlyRateMin: v.optional(v.number()),
+    hourlyRateMax: v.optional(v.number()),
+    projectRateMin: v.optional(v.number()),
+    projectRateMax: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, {
+      hourlyRateMin: args.hourlyRateMin,
+      hourlyRateMax: args.hourlyRateMax,
+      projectRateMin: args.projectRateMin,
+      projectRateMax: args.projectRateMax,
+    });
+  },
+});
+
+/** Admin: delete a showcase project. */
+export const deleteDesignerProject = mutation({
+  args: { id: v.id("designerProjects") },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.id);
+  },
+});
+
 /** Add a showcase project to a designer profile. */
 export const addDesignerProject = mutation({
   args: {
@@ -141,8 +180,12 @@ export const addDesignerProject = mutation({
 export const patchDesignerProject = mutation({
   args: {
     id: v.id("designerProjects"),
+    projectName: v.optional(v.string()),
+    projectUrl: v.optional(v.string()),
     description: v.optional(v.string()),
     imageUrl: v.optional(v.string()),
+    role: v.optional(v.string()),
+    sortOrder: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const { id, ...fields } = args;
@@ -169,6 +212,7 @@ export const updateDesignerStatus = mutation({
 export const patchDesigner = mutation({
   args: {
     id: v.id("designers"),
+    bio: v.optional(v.string()),
     profilePhotoUrl: v.optional(v.string()),
     slug: v.optional(v.string()),
     hourlyRateMin: v.optional(v.number()),

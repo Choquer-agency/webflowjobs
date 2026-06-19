@@ -16,6 +16,14 @@ function fmt(n: number): string {
   return n.toLocaleString('en-US');
 }
 
+/** "10" -> "10 years", "1" -> "1 year", "8 years" -> "8 years". */
+function formatYears(raw: string): string {
+  const v = (raw || '').trim();
+  if (!v) return v;
+  if (/year/i.test(v)) return v;
+  return `${v} ${v === '1' ? 'year' : 'years'}`;
+}
+
 function formatRate(min: number | null, max: number | null, currency: string): string | null {
   if (min === null && max === null) return null;
   const sym = CURRENCY_SYMBOLS[currency] || currency;
@@ -133,7 +141,7 @@ export default async function DesignerProfilePage({ params }: PageProps) {
                     {designer.isSponsored && <SponsoredBadge size="large" />}
                   </div>
                   <p style={{ color: '#666', fontSize: '1rem', marginBottom: '0.75rem' }}>
-                    {designer.country} &bull; {designer.yearsExperience} Webflow experience
+                    {designer.country} &bull; {formatYears(designer.yearsExperience)} Webflow experience
                   </p>
 
                   {/* Social links */}
@@ -241,6 +249,9 @@ export default async function DesignerProfilePage({ params }: PageProps) {
                                 width: '100%',
                                 height: '12rem',
                                 objectFit: 'cover',
+                                objectPosition: project.imageUrl.includes('reliable-erp')
+                                  ? 'top left'
+                                  : 'center',
                               }}
                             />
                           )}
@@ -256,25 +267,27 @@ export default async function DesignerProfilePage({ params }: PageProps) {
                             <p style={{ color: '#555', fontSize: '0.9375rem', lineHeight: 1.6, margin: 0 }}>
                               {project.description}
                             </p>
-                            <a
-                              href={project.projectUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{
-                                display: 'inline-flex',
-                                alignSelf: 'flex-start',
-                                marginTop: 'auto',
-                                padding: '0.375rem 0.75rem',
-                                border: '1px solid rgb(255, 149, 0)',
-                                borderRadius: '0.375rem',
-                                color: 'rgb(255, 149, 0)',
-                                textDecoration: 'none',
-                                fontSize: '0.8125rem',
-                                fontWeight: 600,
-                              }}
-                            >
-                              View Project
-                            </a>
+                            {project.projectUrl && (
+                              <a
+                                href={project.projectUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  display: 'inline-flex',
+                                  alignSelf: 'flex-start',
+                                  marginTop: 'auto',
+                                  padding: '0.375rem 0.75rem',
+                                  border: '1px solid rgb(255, 149, 0)',
+                                  borderRadius: '0.375rem',
+                                  color: 'rgb(255, 149, 0)',
+                                  textDecoration: 'none',
+                                  fontSize: '0.8125rem',
+                                  fontWeight: 600,
+                                }}
+                              >
+                                View Project
+                              </a>
+                            )}
                           </div>
                         </div>
                       ))}
