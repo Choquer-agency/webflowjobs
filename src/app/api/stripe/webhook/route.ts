@@ -2,6 +2,7 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "@convex/_generated/api";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { notifySlack, section, context } from "@/lib/slack";
 
 function getConvexClient() {
   const url = process.env.NEXT_PUBLIC_CONVEX_URL;
@@ -104,6 +105,19 @@ export async function POST(request: Request) {
       console.log(
         `Sponsorship activated: ${companyName} - ${plan} (session: ${session.id})`
       );
+
+      // Slack: paid job! The one that matters most.
+      const amount = (PLAN_AMOUNTS[plan] ?? 0) / 100;
+      const planLabel = plan === "4-week" ? "4-week spotlight" : "1-week spotlight";
+      await notifySlack(`💰 PAID JOB: ${companyName} ($${amount})`, [
+        section(
+          `:moneybag: :tada: *PAID JOB!*\n*${companyName}* just paid for a *${planLabel}* — *$${amount}*`,
+        ),
+        context(
+          `${session.customer_details?.email || ""}  ·  Stripe session ${session.id}`,
+        ),
+        section(`<https://www.webflow.jobs/admin|Open admin →>`),
+      ]);
     } catch (err) {
       console.error("Failed to activate sponsorship:", err);
       return NextResponse.json(

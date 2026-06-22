@@ -2,6 +2,7 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "@convex/_generated/api";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { notifySlack, section, context } from "@/lib/slack";
 
 function getConvexClient() {
   const url = process.env.NEXT_PUBLIC_CONVEX_URL;
@@ -86,6 +87,24 @@ export async function POST(request: Request) {
         });
       }
     }
+
+    const rateStr =
+      hourlyRateMin || hourlyRateMax
+        ? `${currency} ${hourlyRateMin ?? "?"}-${hourlyRateMax ?? "?"}/hr`
+        : projectRateMin || projectRateMax
+          ? `${currency} ${projectRateMin ?? "?"}-${projectRateMax ?? "?"}/project`
+          : "Rate on request";
+
+    // Slack: new designer wants to be featured
+    await notifySlack(`New designer submission: ${firstName} ${lastName}`, [
+      section(
+        `:art: *New designer wants to be featured*\n*${firstName} ${lastName}* — ${country} · ${yearsExperience}`,
+      ),
+      context(
+        `${(specialties || []).join(", ")}  |  ${rateStr}\n${portfolioUrl}  ·  ${email}`,
+      ),
+      section(`<https://www.webflow.jobs/admin|Review in admin →>`),
+    ]);
 
     // Notify admin of the new submission (mirrors the job-submission flow)
     const resendKey = process.env.CHOQUER_RESEND_API_KEY;

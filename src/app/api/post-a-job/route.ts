@@ -3,6 +3,7 @@ import { api } from "@convex/_generated/api";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import Stripe from "stripe";
+import { notifySlack, section, context } from "@/lib/slack";
 
 const SPOTLIGHT_PLANS = {
   "4-week": { name: "4-Week Job Spotlight", amountCents: 17500 },
@@ -104,6 +105,23 @@ export async function POST(request: Request) {
       wants1WeekSpotlight: Boolean(body.wants1WeekSpotlight),
       submitterIp,
     });
+
+    const wantsPaid =
+      Boolean(body.wants4WeekSpotlight) || Boolean(body.wants1WeekSpotlight);
+
+    // Slack: new job submission
+    await notifySlack(`New job submission: ${companyName} — ${title}`, [
+      section(`:inbox_tray: *New job submission*\n*${title}* @ ${companyName}`),
+      context(
+        `${category} · ${jobType} · ${location}  |  ${postingEmail}` +
+          (wantsPaid
+            ? `\n:credit_card: *Wants a paid spotlight* (${body.wants4WeekSpotlight ? "4-week $175" : "1-week $75"}) — payment pending`
+            : body.wantsEmailBlast
+              ? `\n:email: Requested free candidate email blast`
+              : ""),
+      ),
+      section(`<https://www.webflow.jobs/admin|Review in admin →>`),
+    ]);
 
     // If they chose a paid spotlight, kick them into Stripe Checkout.
     // 4-week wins if somehow both are checked.
