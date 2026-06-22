@@ -1,0 +1,45 @@
+name: Keep Alive
+
+# Prevents GitHub from auto-disabling the scheduled workflows
+# (Daily Job Ingestion, Daily Report, Weekly SEO Report) after 60 days
+# with no commits. Ingestion/reports write to Convex, not git, so without
+# this the repo can look "inactive" and the crons get silently switched off.
+#
+# Runs on the 1st and 15th of every month: makes a tiny keepalive commit
+# (resets the inactivity clock for the whole repo) and defensively
+# re-enables any workflow that slipped to disabled_inactivity.
+
+on:
+  schedule:
+    - cron: '0 6 1,15 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Keepalive commit (resets 60-day inactivity timer)
+        run: |
+          mkdir -p .github
+          date -u +%Y-%m-%dT%H:%M:%SZ > .github/keepalive.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/keepalive.txt
+          git commit -m "chore: keepalive [skip ci]" || { echo "nothing to commit"; exit 0; }
+          git push
+
+      - name: Re-enable any inactivity-disabled workflows (defensive)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for wf in "Daily Job Ingestion" "Daily Report" "Weekly SEO Report"; do
+            gh workflow enable "$wf" 2>/dev/null && echo "ensured enabled: $wf" || true
+          done
