@@ -1,9 +1,30 @@
 import Link from 'next/link';
 import Script from 'next/script';
+import type { Metadata } from 'next';
 import { getJobs } from '@/lib/data';
 
 /** Re-fetch job data every 15 minutes so new jobs appear without a redeploy. */
 export const revalidate = 900;
+
+export const metadata: Metadata = {
+  title: 'Webflow Developers & Designers for Hire | Webflow Jobs',
+  description:
+    'Webflow Jobs is the leading job board for Webflow developers and designers. Browse remote Webflow developer jobs, hire vetted Webflow developers, or post a job to reach top Webflow talent.',
+  alternates: { canonical: 'https://www.webflow.jobs' },
+  openGraph: {
+    title: 'Webflow Developers & Designers for Hire | Webflow Jobs',
+    description:
+      'The leading job board for Webflow developers and designers — browse Webflow developer jobs or hire top Webflow talent.',
+    url: 'https://www.webflow.jobs',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Webflow Developers & Designers for Hire | Webflow Jobs',
+    description:
+      'The leading job board for Webflow developers and designers — browse jobs or hire top Webflow talent.',
+  },
+};
 import { CountrySelect } from '@/components/home';
 import AccordionToggle from '@/components/home/AccordionToggle';
 import JobFilterClient from '@/components/home/JobFilterClient';

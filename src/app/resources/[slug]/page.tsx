@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getResources, getResourceBySlug } from '@/lib/data';
 
@@ -260,6 +261,37 @@ export default async function ResourceDetailPage({
                   ) : (
                     <p>Content coming soon.</p>
                   )}
+
+                  {/* Contextual internal links — keyword-rich anchors to the
+                      money pages (lifts homepage/job pages for "webflow
+                      developers / developer / designer" rescue terms). */}
+                  <aside
+                    style={{
+                      marginTop: '3rem',
+                      padding: '1.5rem 1.75rem',
+                      border: '1px solid rgba(255,149,0,0.25)',
+                      borderRadius: '12px',
+                      background: 'rgba(255,149,0,0.04)',
+                    }}
+                  >
+                    <p style={{ fontWeight: 600, fontSize: '1.05rem', margin: '0 0 0.75rem' }}>
+                      Hiring or job-hunting in Webflow?
+                    </p>
+                    <ul style={{ margin: 0, paddingLeft: '1.1rem', lineHeight: 1.9 }}>
+                      <li>
+                        Browse the latest <Link href="/jobs">Webflow developer jobs</Link> and remote roles.
+                      </li>
+                      <li>
+                        Employers can <Link href="/hire-webflow-developer">hire Webflow developers</Link> and designers.
+                      </li>
+                      <li>
+                        Find vetted <Link href="/designers">Webflow designers for hire</Link>.
+                      </li>
+                      <li>
+                        <Link href="/post-a-job">Post a Webflow job</Link> to reach thousands of Webflow professionals.
+                      </li>
+                    </ul>
+                  </aside>
                 </div>
               </div>
             </div>
