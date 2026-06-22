@@ -1,0 +1,43 @@
+name: Weekly SEO Report
+
+on:
+  schedule:
+    # Every Monday at 12:00 UTC (5:00 AM PDT / 4:00 AM PST)
+    - cron: '0 12 * * 1'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Render only, do not send the email'
+        type: boolean
+        default: true
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Send weekly SEO report (latest week file)
+        env:
+          CONVEX_URL: ${{ secrets.CONVEX_URL }}
+          CHOQUER_RESEND_API_KEY: ${{ secrets.CHOQUER_RESEND_API_KEY }}
+          CHOQUER_FROM_EMAIL: ${{ secrets.CHOQUER_FROM_EMAIL }}
+          REPORT_TO_EMAIL: ${{ secrets.REPORT_TO_EMAIL }}
+          # '1' on a manual dry-run; empty (real send) on the scheduled run.
+          DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '1' || '' }}
+        run: |
+          FILE=$(ls scripts/report-content/week-*.json | sort -V | tail -1)
+          echo "Using report content: $FILE"
+          node scripts/weekly-report.mjs "$FILE"

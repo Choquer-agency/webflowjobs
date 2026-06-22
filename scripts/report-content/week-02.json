@@ -1,0 +1,24 @@
+{
+  "weekNumber": 2,
+  "dateRange": "June 15–22, 2026",
+  "siteVisits": null,
+  "siteVisitsNote": "GA4 (G-V4REHJ7432) is live; site-visit numbers will be wired into next week's report via the reliable sender.",
+  "seo": {
+    "summary": "Note on delivery: the scheduled cloud agent fired on time (12:01 UTC) but could not finish the Week 2 implementation unattended — a known limitation where the SEO-data MCPs need interactive auth in headless runs. So this week is a metrics + Week-1-impact report, sent through a reliable path. The Week 2 page-2 rescue work (on-page + internal links) is being run directly rather than by the cloud agent.",
+    "items": [
+      {
+        "what": "Moving report delivery off the cloud agent onto a reliable, secrets-backed mechanism (server-side cron) so the Monday email always lands",
+        "why": "The cloud agent fires but can't reliably complete unattended; the report itself shouldn't depend on it."
+      },
+      {
+        "what": "Week 2 plan = page-2 rescue sprint: on-page optimization + internal links for the 8 keywords stuck at positions 11–40 (webflow developers #22, webflow developer #27, webflow dev #26, etc.)",
+        "why": "These already rank and need a push, not new content — the fastest traffic in the quarter."
+      }
+    ],
+    "links": [
+      { "url": "https://www.webflow.jobs/resources/webflow-developer-salary-guide-2026", "label": "Schema (FAQ/Breadcrumb) shipped Week 1 — now indexing", "kind": "live" }
+    ]
+  },
+  "prevWeekResults": "<p style=\"margin:0 0 10px\"><strong>Week 1's schema + foundation work is already moving rankings</strong> (≈4 days of data — early and noisy, but directional):</p><ul style=\"margin:0 0 12px;padding-left:18px;\"><li><strong>\"webflow designer jobs\": #23 → #9</strong> — jumped onto page 1.</li><li><strong>5 new keywords entered tracking:</strong> \"hire webflow developers\" #11, \"seo specialist salary in us\" #10, \"hire webflow designer\" #21, \"webflow freelancers\" #29, \"webflow freelance\" #32.</li><li>Small gains: \"webflow career\" #7→#6, \"webflow developer job\" #8→#7.</li><li><strong>Rich-result eligibility showing up:</strong> FAQ/featured-snippet + AI-Overview (SGE) features now appear on target SERPs (e.g. \"webflow developer job description\"), and your JobPosting pages still hold <strong>#1 in the AI block</strong> for \"[city] webflow developer\".</li></ul><p style=\"margin:0;color:#666;font-size:13px;\">Caveat: a few terms dipped on normal early volatility (\"webflow developer\" #20→#27, \"webflow dev\" #18→#26). The llms.txt + schema impact on AI citations and rich results typically takes 2–4 weeks to surface in Search Console.</p>",
+  "prevWeekResultsNote": null
+}

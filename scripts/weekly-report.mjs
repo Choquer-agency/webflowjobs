@@ -164,11 +164,14 @@ async function main() {
   }
   const content = JSON.parse(fs.readFileSync(contentPath, "utf8"));
 
-  // Report against PRODUCTION data. REPORT_CONVEX_URL overrides the (dev)
-  // NEXT_PUBLIC_CONVEX_URL found in local .env.local.
+  // Report against PRODUCTION data. In GitHub Actions this is CONVEX_URL
+  // (same secret the daily-report workflow uses); locally REPORT_CONVEX_URL
+  // overrides the dev NEXT_PUBLIC_CONVEX_URL in .env.local.
   const convexUrl =
-    process.env.REPORT_CONVEX_URL || process.env.NEXT_PUBLIC_CONVEX_URL;
-  if (!convexUrl) throw new Error("REPORT_CONVEX_URL / NEXT_PUBLIC_CONVEX_URL not set");
+    process.env.REPORT_CONVEX_URL ||
+    process.env.CONVEX_URL ||
+    process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (!convexUrl) throw new Error("CONVEX_URL / NEXT_PUBLIC_CONVEX_URL not set");
   const convex = new ConvexHttpClient(convexUrl);
   const metrics = await convex.query(api.reporting.weeklyMetrics, {
     nowMs: Date.now(),
