@@ -13,14 +13,15 @@ export const dynamic = "force-dynamic";
 
 async function fetchData() {
   const url = process.env.NEXT_PUBLIC_CONVEX_URL;
-  if (!url) return { applicants: [], submissions: [], jobs: [], designers: [] };
+  if (!url) return { applicants: [], submissions: [], jobs: [], designers: [], emails: [] };
   const convex = new ConvexHttpClient(url);
 
-  const [applicants, submissions, jobs, designers] = await Promise.all([
+  const [applicants, submissions, jobs, designers, emails] = await Promise.all([
     convex.query(api.applicants.listApplicants, {}),
     convex.query(api.jobSubmissions.listSubmissions, {}),
     convex.query(api.jobs.listAllJobs, {}),
     convex.query(api.designers.listAllDesigners, {}),
+    convex.query(api.agencyOutreach.listAgencyOutreach, {}),
   ]);
 
   // job _id -> slug, so admin "View live" links resolve to the real URL
@@ -100,6 +101,18 @@ async function fetchData() {
       publishedJobId: s.publishedJobId ? String(s.publishedJobId) : undefined,
       publishedJobSlug: s.publishedJobId ? slugById[String(s.publishedJobId)] : undefined,
     })),
+    emails: emails.map((e: any) => ({
+      _id: String(e._id),
+      companyDomain: e.companyDomain,
+      companyName: e.companyName,
+      contactEmail: e.contactEmail,
+      jobSlug: e.jobSlug,
+      sentAt: e.sentAt,
+      status: e.status,
+      resendMessageId: e.resendMessageId,
+      estimatedHours: e.estimatedHours,
+      quotedPackage: e.quotedPackage,
+    })),
   };
 }
 
@@ -115,13 +128,14 @@ export default async function AdminPage({
     return <LoginForm error={params.error === "1"} />;
   }
 
-  const { applicants, submissions, jobs, designers } = await fetchData();
+  const { applicants, submissions, jobs, designers, emails } = await fetchData();
   return (
     <AdminDashboard
       applicants={applicants}
       submissions={submissions}
       jobs={jobs}
       designers={designers}
+      emails={emails}
     />
   );
 }

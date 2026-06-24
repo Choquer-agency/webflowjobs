@@ -6,19 +6,22 @@ import { LeadsView, type Applicant } from "./LeadsView";
 import { SubmissionsView, type Submission } from "./SubmissionsView";
 import { DesignersView, type DesignerRow } from "./DesignersView";
 import { MetricsView, type JobRow } from "./MetricsView";
+import { EmailsView, type OutreachEmail } from "./EmailsView";
 
-type Tab = "dashboard" | "leads" | "submissions" | "designers";
+type Tab = "dashboard" | "leads" | "submissions" | "designers" | "emails";
 
 export function AdminDashboard({
   applicants,
   submissions,
   jobs,
   designers,
+  emails,
 }: {
   applicants: Applicant[];
   submissions: Submission[];
   jobs: JobRow[];
   designers: DesignerRow[];
+  emails: OutreachEmail[];
 }) {
   const pendingJobs = submissions.filter((s) => s.status === "pending").length;
   const pendingDesigners = designers.filter((d) => d.status === "pending").length;
@@ -97,6 +100,12 @@ export function AdminDashboard({
           count={designers.length}
           badge={pendingDesigners > 0 ? pendingDesigners : undefined}
         />
+        <TabButton
+          active={tab === "emails"}
+          onClick={() => setTab("emails")}
+          label="Emails Sent"
+          count={emails.length}
+        />
       </div>
 
       {tab === "dashboard" && (
@@ -110,6 +119,7 @@ export function AdminDashboard({
       {tab === "leads" && <LeadsView applicants={applicants} />}
       {tab === "submissions" && <SubmissionsView submissions={submissions} />}
       {tab === "designers" && <DesignersView designers={designers} />}
+      {tab === "emails" && <EmailsView emails={emails} />}
     </div>
   );
 }

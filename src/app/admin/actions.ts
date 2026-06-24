@@ -125,6 +125,57 @@ export async function approveDesigner(id: string) {
   revalidatePath("/designers");
 }
 
+// ---------------------------------------------------------------------------
+// Outreach email details (Resend) — fetched lazily so the main admin load
+// isn't blocked on dozens of Resend calls.
+// ---------------------------------------------------------------------------
+
+export type EmailDetail = {
+  status: string; // Resend last_event: delivered / opened / bounced / ...
+  subject?: string;
+  text?: string;
+};
+
+export async function getOutreachEmailDetails(
+  ids: string[],
+): Promise<Record<string, EmailDetail>> {
+  const jar = await cookies();
+  requireAuth(jar);
+
+  const key = process.env.CHOQUER_RESEND_API_KEY;
+  const out: Record<string, EmailDetail> = {};
+  if (!key) return out;
+
+  const unique = Array.from(new Set(ids.filter(Boolean))).slice(0, 100);
+  const chunkSize = 5;
+  for (let i = 0; i < unique.length; i += chunkSize) {
+    const chunk = unique.slice(i, i + chunkSize);
+    await Promise.all(
+      chunk.map(async (id) => {
+        try {
+          const res = await fetch(`https://api.resend.com/emails/${id}`, {
+            headers: { Authorization: `Bearer ${key}` },
+            cache: "no-store",
+          });
+          if (!res.ok) {
+            out[id] = { status: "unknown" };
+            return;
+          }
+          const d = await res.json();
+          out[id] = {
+            status: d.last_event || "sent",
+            subject: d.subject,
+            text: d.text,
+          };
+        } catch {
+          out[id] = { status: "unknown" };
+        }
+      }),
+    );
+  }
+  return out;
+}
+
 export async function rejectDesigner(id: string) {
   const jar = await cookies();
   requireAuth(jar);

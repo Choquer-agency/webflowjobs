@@ -55,6 +55,18 @@ export const markAgencyOutreachStatus = mutation({
   },
 });
 
+/** List agency outreach emails sent, newest first (for the admin dashboard). */
+export const listAgencyOutreach = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("agencyOutreachLog")
+      .withIndex("by_sentAt")
+      .order("desc")
+      .take(500);
+  },
+});
+
 /** Log an agency outreach email that was sent. */
 export const logAgencyOutreach = mutation({
   args: {
