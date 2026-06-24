@@ -51,6 +51,14 @@ export function EmailsView({ emails }: { emails: OutreachEmail[] }) {
   const [loadingDetails, setLoadingDetails] = useState(true);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [q, setQ] = useState("");
+  const [copied, setCopied] = useState<string | null>(null);
+
+  function copy(text: string, key: string) {
+    navigator.clipboard?.writeText(text).then(() => {
+      setCopied(key);
+      setTimeout(() => setCopied((c) => (c === key ? null : c)), 1500);
+    });
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -133,26 +141,49 @@ export function EmailsView({ emails }: { emails: OutreachEmail[] }) {
           return (
             <div key={e._id} style={card}>
               <div
-                onClick={() => toggle(e._id)}
-                style={{ padding: "12px 16px", display: "grid", gridTemplateColumns: "1.4fr 1.6fr 0.8fr 1fr auto", gap: 12, alignItems: "center", cursor: "pointer" }}
+                style={{ padding: "12px 16px", display: "grid", gridTemplateColumns: "1.3fr 1.5fr 0.7fr 0.9fr auto auto", gap: 12, alignItems: "center" }}
                 className="emails-row"
               >
-                <a href={`https://${e.companyDomain}`} target="_blank" rel="noreferrer" onClick={(ev) => ev.stopPropagation()} style={{ color: "#111", fontWeight: 600, fontSize: 13, textDecoration: "none", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <a href={`https://${e.companyDomain}`} target="_blank" rel="noreferrer" title="Open website in new tab" style={{ color: "#111", fontWeight: 600, fontSize: 13, textDecoration: "none", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {e.companyDomain}
                 </a>
-                <a href={`mailto:${e.contactEmail}`} onClick={(ev) => ev.stopPropagation()} style={{ color: "#ff5a1f", fontSize: 13, textDecoration: "none", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {e.contactEmail}
-                </a>
+                <button
+                  type="button"
+                  onClick={() => copy(e.contactEmail, `${e._id}:email`)}
+                  title="Click to copy email"
+                  style={{ background: "none", border: "none", padding: 0, textAlign: "left", color: copied === `${e._id}:email` ? "#1f7a3a" : "#ff5a1f", fontSize: 13, cursor: "pointer", fontFamily: "inherit", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                >
+                  {copied === `${e._id}:email` ? "Copied! ✓" : e.contactEmail}
+                </button>
                 <span style={{ fontSize: 12, color: "#666" }}>{e.quotedPackage}</span>
                 <span style={{ fontSize: 12, color: "#999" }}>{formatDate(e.sentAt)}</span>
                 <StatusBadge status={det?.status} />
+                <button
+                  type="button"
+                  onClick={() => toggle(e._id)}
+                  style={{ background: "#fff", border: "1px solid #ddd", borderRadius: 6, padding: "6px 10px", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap", color: "#333" }}
+                >
+                  {isOpen ? "Hide ▲" : "Read email ▾"}
+                </button>
               </div>
 
               {isOpen && (
                 <div style={{ padding: "14px 18px", borderTop: "1px solid #eee", background: "#fafafa" }}>
                   <Detail label="Company">{e.companyName}</Detail>
                   {det?.subject && <Detail label="Subject">{det.subject}</Detail>}
-                  <Detail label="Message">
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                      <span style={{ color: "#888", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, fontWeight: 600 }}>Message sent</span>
+                      {det?.text && (
+                        <button
+                          type="button"
+                          onClick={() => copy(det.text!, `${e._id}:msg`)}
+                          style={{ background: "#fff", border: "1px solid #ddd", borderRadius: 6, padding: "4px 12px", fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", color: copied === `${e._id}:msg` ? "#1f7a3a" : "#333" }}
+                        >
+                          {copied === `${e._id}:msg` ? "Copied! ✓" : "Copy message"}
+                        </button>
+                      )}
+                    </div>
                     {det?.text ? (
                       <div style={{ background: "#fff", border: "1px solid #eee", borderRadius: 6, padding: 12, whiteSpace: "pre-wrap", fontSize: 13, maxHeight: 320, overflow: "auto" }}>
                         {det.text}
@@ -162,7 +193,7 @@ export function EmailsView({ emails }: { emails: OutreachEmail[] }) {
                     ) : (
                       <span style={{ color: "#999" }}>Message body unavailable.</span>
                     )}
-                  </Detail>
+                  </div>
                   <Detail label="Job referenced">
                     <a href={`/jobs/${e.jobSlug}`} target="_blank" rel="noreferrer" style={{ color: "#ff5a1f" }}>{e.jobSlug}</a>
                   </Detail>
