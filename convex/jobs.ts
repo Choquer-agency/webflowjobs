@@ -10,25 +10,24 @@ import {
 // Public Queries (used by the Next.js frontend)
 // ---------------------------------------------------------------------------
 
-/** Returns jobs published within the last 60 days, sponsored first then newest. */
+/**
+ * Returns jobs for the homepage listing, sponsored first then newest.
+ * No age cutoff — once a job is posted it stays on the site (jobs are never
+ * auto-removed). The csv-import seed batch is excluded so the board reflects
+ * real, curated postings.
+ */
 export const listRecentJobs = query({
   args: {},
   handler: async (ctx) => {
-    const sixtyDaysAgo = new Date();
-    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
-    const cutoff = sixtyDaysAgo.toISOString();
-
     const jobs = await ctx.db
       .query("jobs")
       .withIndex("by_publishedAt")
       .order("desc")
-      .take(500);
+      .take(1000);
 
-    const recent = jobs.filter(
-      (j) => !j.publishedAt || j.publishedAt >= cutoff
-    );
+    const visible = jobs.filter((j) => j.source !== "csv-import");
 
-    return recent.sort((a, b) => {
+    return visible.sort((a, b) => {
       if (a.isSponsored && !b.isSponsored) return -1;
       if (!a.isSponsored && b.isSponsored) return 1;
       return (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "");
