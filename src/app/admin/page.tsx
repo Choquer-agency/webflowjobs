@@ -23,6 +23,10 @@ async function fetchData() {
     convex.query(api.designers.listAllDesigners, {}),
   ]);
 
+  // job _id -> slug, so admin "View live" links resolve to the real URL
+  const slugById: Record<string, string> = {};
+  for (const j of jobs) slugById[String(j._id)] = j.slug;
+
   return {
     jobs: jobs.map((j: any) => ({
       slug: j.slug,
@@ -94,6 +98,7 @@ async function fetchData() {
       submittedAt: s.submittedAt,
       reviewedAt: s.reviewedAt,
       publishedJobId: s.publishedJobId ? String(s.publishedJobId) : undefined,
+      publishedJobSlug: s.publishedJobId ? slugById[String(s.publishedJobId)] : undefined,
     })),
   };
 }

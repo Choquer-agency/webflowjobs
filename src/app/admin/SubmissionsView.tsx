@@ -35,6 +35,7 @@ export type Submission = {
   submittedAt: string;
   reviewedAt?: string;
   publishedJobId?: string;
+  publishedJobSlug?: string;
 };
 
 function formatDate(iso: string): string {
@@ -268,9 +269,9 @@ export function SubmissionsView({
                       Delete
                     </button>
                   )}
-                  {s.status === "approved" && s.publishedJobId && (
+                  {s.status === "approved" && s.publishedJobSlug && (
                     <a
-                      href={`/jobs/${s.publishedJobId}`}
+                      href={`/jobs/${s.publishedJobSlug}`}
                       target="_blank"
                       rel="noreferrer"
                       style={{ ...btnSmall, textDecoration: "none" }}
